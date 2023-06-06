@@ -1,0 +1,15 @@
+# Ignorar arquivos específicos do Next.js
+.next/
+out/
+node_modules/
+
+# Ignorar arquivos específicos do Nest.js
+dist/
+node_modules/
+
+# Arquivos de ambiente (opcional - se você quiser ignorar os arquivos .env)
+.env.local
+.env.production
+
+# Arquivos de log (opcional - se você quiser ignorar os arquivos de log gerados)
+*.log
