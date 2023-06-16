@@ -97,7 +97,6 @@ export class UserController extends BaseController {
       const token = user.id;
       return { token };
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         'E-mail já está cadastrado',
         HttpStatus.BAD_REQUEST,
