@@ -1,4 +1,12 @@
-import { Controller, Post, Get, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Delete,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -11,11 +19,19 @@ import {
 import { PrismaService } from '../../services/prisma.service';
 import { BaseController } from 'src/common/BaseController.common';
 import { IUser, User } from '../../types/IUser';
+import { CreateUserDto } from 'src/validators/User.dtos';
+import { JWTService } from 'src/services/jwt.service';
+import { CreateUserResponse } from '../../schemas/CreateUserResponse';
+import { BcryptService } from 'src/services/bcrypt.service';
 
 @Controller('user')
 @ApiTags('User')
 export class UserController extends BaseController {
-  constructor(private prismaService: PrismaService) {
+  constructor(
+    private prismaService: PrismaService,
+    private jWTService: JWTService,
+    private bcryptService: BcryptService,
+  ) {
     super();
   }
 
@@ -42,5 +58,60 @@ export class UserController extends BaseController {
         name: true,
       },
     });
+  }
+
+  @Get('/:id')
+  async getById(id: string): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+
+  @Post()
+  @ApiOperation({
+    summary: 'Criar usuário',
+    description: 'Rota para criar usuário.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Retorna o token do usuário',
+    type: CreateUserResponse,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'E-mail já está cadastrado',
+  })
+  async create(
+    @Body() { email, name, password }: CreateUserDto,
+  ): Promise<CreateUserResponse> {
+    try {
+      const cryptPassword = await this.bcryptService.hashPassword(password);
+      const user = await this.prismaService.user.create({
+        data: {
+          password: cryptPassword,
+          email,
+          name,
+          avatar: '',
+          bio: '',
+          cover: '',
+        },
+      });
+      const token = user.id;
+      return { token };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'E-mail já está cadastrado',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Post('/:id')
+  async update(id: string, data: any): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+
+  @Delete()
+  async delete(id: string): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }
