@@ -60,11 +60,6 @@ export class UserController extends BaseController {
     });
   }
 
-  @Get('/:id')
-  async getById(id: string): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
   @Post()
   @ApiOperation({
     summary: 'Criar usuário',
@@ -104,13 +99,18 @@ export class UserController extends BaseController {
     }
   }
 
-  @Post('/:id')
+  // @Post('/:id')
   async update(id: string, data: any): Promise<any> {
     throw new Error('Method not implemented.');
   }
 
-  @Delete()
+  // @Delete()
   async delete(id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  //@Get('/:id')
+  async getById(id: string): Promise<any> {
     throw new Error('Method not implemented.');
   }
 }

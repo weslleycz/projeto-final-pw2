@@ -19,16 +19,22 @@ const initialValues = {
   passwordConfirm: "",
 };
 
-const Signup = () => {
+type ISubmit={
+  name: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+}
 
-  const handleSubmit = async (data: any,{ setErrors }: any) => {
+const Signup = () => {
+  const handleSubmit = async (data: ISubmit, { setErrors }: any) => {
     try {
-       const res = await api.post("http://localhost:3000/user",data);
-       console.log(res.data);
+      const res = await api.post(`/user`, data);
+      console.log(res.data);
     } catch (error) {
-        setErrors({email:"E-mail já está cadastrado"})
+      setErrors({ email: "E-mail já está cadastrado" });
     }
-  } 
+  };
 
   return (
     <>
