@@ -6,6 +6,7 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  Param,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -13,6 +14,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiHeader,
+  ApiParam,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
@@ -89,9 +91,10 @@ export class UserController extends BaseController {
           cover: '',
         },
       });
-      const token = user.id;
+      const token = this.jWTService.login(user.id.toString());
       return { token };
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         'E-mail já está cadastrado',
         HttpStatus.BAD_REQUEST,
@@ -99,18 +102,34 @@ export class UserController extends BaseController {
     }
   }
 
-  // @Post('/:id')
-  async update(id: string, data: any): Promise<any> {
+  @Post('/:id')
+  async update(@Param('id') id: string): Promise<any> {
     throw new Error('Method not implemented.');
   }
 
-  // @Delete()
-  async delete(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
-  //@Get('/:id')
-  async getById(id: string): Promise<any> {
-    throw new Error('Method not implemented.');
+  @Get('/:id')
+  @ApiOperation({ summary: 'Buscar usuário por ID' })
+  @ApiParam({ name: 'id', description: 'ID do usuário' })
+  @ApiResponse({ status: 200, description: 'Usuário encontrado', type: User })
+  @ApiResponse({ status: 400, description: 'Usuário não encontrado' })
+  async getById(@Param('id') id: string): Promise<IUser> {
+    try {
+      return await this.prismaService.user.findFirst({
+        where: {
+          id,
+        },
+        select: {
+          avatar: true,
+          bio: true,
+          cover: true,
+          posts: true,
+          email: true,
+          id: true,
+          name: true,
+        },
+      });
+    } catch (error) {
+      throw new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST);
+    }
   }
 }
