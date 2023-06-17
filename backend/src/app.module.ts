@@ -6,11 +6,19 @@ import { UserController } from './controllers/user/user.controller';
 import { JWTService } from './services/jwt.service';
 import { BcryptService } from './services/bcrypt.service';
 import { JwtGuardMiddleware } from './middlewares/jwt-guard/jwt-guard.middleware';
+import { FilesController } from './controllers/files/files.controller';
+import { GridFsService } from './services/gridfs.service';
 
 @Module({
   imports: [],
-  controllers: [AppController, UserController],
-  providers: [AppService, PrismaService, JWTService, BcryptService],
+  controllers: [AppController, UserController, FilesController],
+  providers: [
+    AppService,
+    PrismaService,
+    JWTService,
+    BcryptService,
+    GridFsService,
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
@@ -20,5 +28,9 @@ export class AppModule {
     consumer
       .apply(JwtGuardMiddleware)
       .forRoutes({ path: 'user/:id', method: RequestMethod.DELETE });
+    consumer.apply(JwtGuardMiddleware).forRoutes({
+      path: 'files/upload/avatar',
+      method: RequestMethod.PUT,
+    });
   }
 }

@@ -21,10 +21,11 @@ import {
 import { PrismaService } from '../../services/prisma.service';
 import { BaseController } from 'src/common/BaseController.common';
 import { IUser, User } from '../../types/IUser';
-import { CreateUserDto } from 'src/validators/User.dtos';
+import { CreateUserDto, LoginUserDto } from 'src/validators/User.dtos';
 import { JWTService } from 'src/services/jwt.service';
 import { CreateUserResponse } from '../../schemas/CreateUserResponse';
 import { BcryptService } from 'src/services/bcrypt.service';
+import { LoginUserResponse } from 'src/schemas/LoginUserResponse';
 
 @Controller('user')
 @ApiTags('User')
@@ -159,6 +160,38 @@ export class UserController extends BaseController {
       return 'Usuário excluído com sucesso';
     } catch (error) {
       throw new HttpException('Requisição inválida', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post('login')
+  @ApiOperation({
+    summary: 'Login de usuário',
+    description: 'Rota para criar usuário.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna o token do usuário',
+    type: CreateUserResponse,
+  })
+  @ApiResponse({ status: 401, description: 'Email não vinculado' })
+  @ApiResponse({ status: 400, description: 'Senha incorreta' })
+  async loginUser(
+    @Body() { email, password }: LoginUserDto,
+  ): Promise<LoginUserResponse> {
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    if (user != null) {
+      if (await this.bcryptService.comparePasswords(password, user.password)) {
+        const token = this.jWTService.login(user.id.toString());
+        return { token };
+      } else {
+        throw new HttpException('Senha incorreta', HttpStatus.UNAUTHORIZED);
+      }
+    } else {
+      throw new HttpException('Email não vinculado', HttpStatus.UNAUTHORIZED);
     }
   }
 }

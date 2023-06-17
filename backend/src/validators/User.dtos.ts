@@ -40,3 +40,15 @@ export class CreateUserDto {
   })
   passwordConfirm: string;
 }
+
+export class LoginUserDto {
+  @IsString()
+  @IsNotEmpty({ message: 'Você precisa informar o seu e-mail' })
+  @ApiProperty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Você precisa informar a sua senha' })
+  @ApiProperty()
+  password: string;
+}
