@@ -1,16 +1,20 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   TextField,
   Button,
   FormLabel,
   Container,
   FormControl,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { createUserSchema } from "../../schema/createUserSchema";
 import styles from "./styles.module.scss";
 import { api } from "@/services/apí";
+import { loginUserSchema } from "@/schema/loginUserSchema";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const initialValues = {
   name: "",
@@ -19,14 +23,27 @@ const initialValues = {
   passwordConfirm: "",
 };
 
-type ISubmit={
+type ISubmit = {
   name: string;
   email: string;
   password: string;
   passwordConfirm: string;
-}
+};
 
 const Signup = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const handleTogglePasswordConfirmVisibility = () => {
+    setShowPasswordConfirm(
+      (prevShowPasswordConfirm) => !prevShowPasswordConfirm
+    );
+  };
+
   const handleSubmit = async (data: ISubmit, { setErrors }: any) => {
     try {
       const res = await api.post(`/user`, data);
@@ -41,7 +58,7 @@ const Signup = () => {
       <Container maxWidth="sm">
         <Formik
           initialValues={initialValues}
-          validationSchema={createUserSchema}
+          validationSchema={loginUserSchema}
           onSubmit={handleSubmit}
         >
           <Form>
@@ -87,7 +104,20 @@ const Signup = () => {
                 name="password"
                 fullWidth
                 margin="normal"
-                type="password"
+                type={showPassword ? "text" : "password"}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePasswordVisibility}>
+                        {showPassword ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <ErrorMessage
                 name="password"
@@ -104,7 +134,22 @@ const Signup = () => {
                 name="passwordConfirm"
                 fullWidth
                 margin="normal"
-                type="password"
+                type={showPasswordConfirm ? "text" : "password"}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleTogglePasswordConfirmVisibility}
+                      >
+                        {showPasswordConfirm ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <ErrorMessage
                 name="passwordConfirm"
