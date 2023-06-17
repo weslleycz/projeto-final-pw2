@@ -132,4 +132,33 @@ export class UserController extends BaseController {
       throw new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Delete('/:id')
+  @ApiOperation({ summary: 'Excluir usuário por ID' })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    description: 'ID do usuário a ser excluído',
+  })
+  @ApiHeader({
+    name: 'token',
+    description: 'Token de autenticação',
+    required: true,
+  })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Usuário excluído com sucesso' })
+  @ApiResponse({ status: 400, description: 'Requisição inválida' })
+  @ApiResponse({ status: 401, description: 'Acesso não autorizado' })
+  async delete(@Param('id') id: string): Promise<string> {
+    try {
+      await this.prismaService.user.delete({
+        where: {
+          id: id,
+        },
+      });
+      return 'Usuário excluído com sucesso';
+    } catch (error) {
+      throw new HttpException('Requisição inválida', HttpStatus.BAD_REQUEST);
+    }
+  }
 }

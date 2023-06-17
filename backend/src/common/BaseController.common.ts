@@ -7,5 +7,5 @@ export abstract class BaseController {
 
   abstract update(id: string, data: any): Promise<any>;
 
-  abstract delete(id: string): Promise<void>;
+  abstract delete(id: string): Promise<string>;
 }
