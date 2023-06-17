@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -103,7 +104,8 @@ export class UserController extends BaseController {
     }
   }
 
-  @Post('/:id')
+  @Patch('/:id')
+  @ApiBearerAuth()
   async update(@Param('id') id: string): Promise<any> {
     throw new Error('Method not implemented.');
   }
@@ -134,7 +136,7 @@ export class UserController extends BaseController {
     }
   }
 
-  @Delete('/:id')
+  @Delete('delete/:id')
   @ApiOperation({ summary: 'Excluir usuário por ID' })
   @ApiParam({
     name: 'id',
