@@ -1,20 +1,22 @@
 "use client";
-import React, { useState } from "react";
+import { createUserSchema } from "@/schema/createUserSchema";
+import { api } from "@/services/apí";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
-  TextField,
   Button,
-  FormLabel,
   Container,
   FormControl,
-  InputAdornment,
+  FormLabel,
   IconButton,
+  InputAdornment,
+  TextField,
 } from "@mui/material";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { setCookie } from "cookies-next";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useState } from "react";
 import styles from "./styles.module.scss";
-import { api } from "@/services/apí";
-import { loginUserSchema } from "@/schema/loginUserSchema";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useRouter } from 'next/navigation'
 
 const initialValues = {
   name: "",
@@ -34,6 +36,8 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
+  const router = useRouter();
+
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -47,7 +51,12 @@ const Signup = () => {
   const handleSubmit = async (data: ISubmit, { setErrors }: any) => {
     try {
       const res = await api.post(`/user`, data);
-      console.log(res.data);
+      const expirationDate = new Date();
+      expirationDate.setTime(expirationDate.getTime() + 72 * 60 * 60 * 1000);
+      setCookie("token", res.data.token, {
+        expires: expirationDate,
+      });
+      router.push(`/feed`);
     } catch (error) {
       setErrors({ email: "E-mail já está cadastrado" });
     }
@@ -58,7 +67,7 @@ const Signup = () => {
       <Container maxWidth="sm">
         <Formik
           initialValues={initialValues}
-          validationSchema={loginUserSchema}
+          validationSchema={createUserSchema}
           onSubmit={handleSubmit}
         >
           <Form>
