@@ -154,24 +154,7 @@ img {
 }
 
 body {
-    background-image: radial-gradient(
-        circle at 0% 0%,
-        #ffffff 0,
-        #ffffff 7.14%,
-        #ffffff 14.29%,
-        #ffffff 21.43%,
-        #ffffff 28.57%,
-        #ffffff 35.71%,
-        #ffffff 42.86%,
-        #ffffff 50%,
-        #ffffff 57.14%,
-        #ffffff 64.29%,
-        #ffffff 71.43%,
-        #ffffff 78.57%,
-        #ffffff 85.71%,
-        #ffffff 92.86%,
-        #ffffff 100%
-    );
+    background-color: #F9F9F9;
     color: #000000;
     -webkit-font-smoothing: antialiased;
     font-family: "Inter";

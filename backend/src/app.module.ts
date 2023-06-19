@@ -25,6 +25,9 @@ export class AppModule {
     consumer
       .apply(JwtGuardMiddleware)
       .forRoutes({ path: 'user/delete/:id', method: RequestMethod.DELETE });
+    consumer
+      .apply(JwtGuardMiddleware)
+      .forRoutes({ path: '/user/private/token', method: RequestMethod.GET });
     consumer.apply(JwtGuardMiddleware).forRoutes({
       path: 'files/upload/avatar',
       method: RequestMethod.PUT,

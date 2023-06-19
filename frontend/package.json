@@ -26,6 +26,7 @@
     "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-query": "^3.39.3",
     "sass": "^1.63.4",
     "scss": "^0.2.4",
     "typescript": "5.1.3",

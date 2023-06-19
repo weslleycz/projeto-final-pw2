@@ -14,7 +14,6 @@ export class JWTService {
       verifyJWT(token, process.env.Security_JWT);
       return true;
     } catch (err) {
-      console.log(err);
       return false;
     }
   }

@@ -1,0 +1,24 @@
+$smallScreen: 600px;
+$mediumScreen: 960px;
+
+.conteiner {
+
+  @media screen and (max-width: $smallScreen) {
+    padding: 1.5%;
+  }
+
+  @media screen and (min-width: $mediumScreen + 1) {
+    padding: 0.4%;
+  }
+
+  background-color: #ffffff;
+  margin-bottom: 1.6%;
+  align-items: center;
+  display: flex;
+}
+
+.logo{
+  img {
+    margin-left: 0.5%;
+  }
+}

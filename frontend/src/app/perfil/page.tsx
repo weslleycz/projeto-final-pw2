@@ -1,19 +1,17 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Container } from "@/components/Container";
 import { Header } from "@/components/Header";
 
-
-const Feed = () => {
+const Perfil = () => {
   return (
     <>
-      <Header/>
+      <Header />
       <Container>
-        kkkk
+        Perfil
       </Container>
     </>
   );
 };
 
-export default Feed;
+export default Perfil;

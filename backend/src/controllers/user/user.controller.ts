@@ -8,12 +8,11 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Headers,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
   ApiHeader,
   ApiParam,
   ApiOperation,
@@ -27,6 +26,10 @@ import { JWTService } from 'src/services/jwt.service';
 import { CreateUserResponse } from '../../schemas/CreateUserResponse';
 import { BcryptService } from 'src/services/bcrypt.service';
 import { LoginUserResponse } from 'src/schemas/LoginUserResponse';
+
+type IJWT = {
+  data: string;
+};
 
 @Controller('user')
 @ApiTags('User')
@@ -96,7 +99,6 @@ export class UserController extends BaseController {
       const token = this.jWTService.login(user.id.toString());
       return { token };
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         'E-mail já está cadastrado',
         HttpStatus.BAD_REQUEST,
@@ -110,7 +112,7 @@ export class UserController extends BaseController {
     throw new Error('Method not implemented.');
   }
 
-  @Get('/:id')
+  @Get('/pubic/:id')
   @ApiOperation({ summary: 'Buscar usuário por ID' })
   @ApiParam({ name: 'id', description: 'ID do usuário' })
   @ApiResponse({ status: 200, description: 'Usuário encontrado', type: User })
@@ -134,6 +136,33 @@ export class UserController extends BaseController {
     } catch (error) {
       throw new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  @Get('/private/token')
+  @ApiOperation({ summary: 'Buscar usuário por Token' })
+  @ApiResponse({ status: 200, description: 'Usuário encontrado', type: User })
+  @ApiHeader({
+    name: 'token',
+    description: 'Token de autenticação',
+    required: true,
+  })
+  @ApiBearerAuth()
+  async getByToken(@Headers() headers: Record<string, string>) {
+    const id = <IJWT>this.jWTService.decode(headers.token);
+    return await this.prismaService.user.findFirst({
+      where: {
+        id: id.data.toString(),
+      },
+      select: {
+        avatar: true,
+        bio: true,
+        cover: true,
+        posts: true,
+        email: true,
+        id: true,
+        name: true,
+      },
+    });
   }
 
   @Delete('delete/:id')
