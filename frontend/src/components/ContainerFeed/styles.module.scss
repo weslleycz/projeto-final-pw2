@@ -1,0 +1,16 @@
+$smallScreen: 600px;
+$mediumScreen: 960px;
+.container {
+
+//   @media screen and (max-width: $smallScreen) {
+
+//   }
+
+  @media screen and (min-width: $mediumScreen + 1) {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 500px;
+    width: 1000px;
+  }
+
+}

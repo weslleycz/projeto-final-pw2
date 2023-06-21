@@ -2,5 +2,8 @@
   "name": "projeto-final-pw2",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react-sound": "^1.2.3"
+  }
 }

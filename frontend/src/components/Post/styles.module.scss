@@ -1,0 +1,39 @@
+$smallScreen: 600px;
+$mediumScreen: 960px;
+
+.container {
+  background-color: #ffffff;
+  @media screen and (min-width: $mediumScreen + 1) {
+    width: 100%;
+    padding:6%;
+    margin: 2%;
+  }
+
+  @media screen and (max-width: $smallScreen) {
+    padding:3%;
+    width:89%;
+    margin: 2%;
+  }
+  
+
+}
+
+.avatar-container{
+    padding: 1%;
+}
+
+.avatar-text{
+    font-weight: bold;
+    color: #000000;
+}
+
+.avatar-date{
+    color: #A49E9E;
+    font-size: small;
+}
+
+.post-title{
+    padding: 1%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}

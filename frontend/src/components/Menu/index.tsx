@@ -10,7 +10,7 @@ export const Menu = () => {
 
   return (
     <>
-      <Grid sx={{ bgcolor: "#ffffff", height: "91vh" }} item xs={6} md={2.5}>
+      <Grid sx={{ bgcolor: "#ffffff", height: "90vh" }} item xs={6} md={2.5}>
         <AvatarHeader />
         <Box className={styles["btns-container"]}>
           <Stack spacing={2}>
@@ -44,7 +44,7 @@ export const Menu = () => {
             )}
             {pathname === "/perfil" ? (
               <button className={styles["btn-on"]}>
-                <span></span>
+                <span className={styles.line}></span>
                 <Box className={styles["btn-text"]}>
                   <Image
                     src="/Perfil-on.svg"
