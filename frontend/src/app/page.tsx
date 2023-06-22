@@ -18,7 +18,6 @@ import { useState } from "react";
 import styles from "./styles.module.scss";
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Planta from '../../assets/planta.png';
 import Logo from '../../public/Logo.svg';
 
 const initialValues = {
@@ -73,7 +72,7 @@ export default function Home() {
               width={55}
               height={55}
               alt="Picture of the author"
-              style={{ marginBottom: 56 }}
+              style={{ marginBottom: 46 }}
             />
             <aside className={styles['aside']}>
               <p className={styles["login"]}>Login</p>
