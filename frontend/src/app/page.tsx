@@ -16,14 +16,17 @@ import { setCookie } from "cookies-next";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
 import styles from "./styles.module.scss";
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Planta from '../../assets/planta.png';
+import Logo from '../../public/Logo.svg';
 
 const initialValues = {
   email: "",
   password: "",
 };
 
-type ISubmit={
+type ISubmit = {
   email: string;
   password: string;
 }
@@ -45,7 +48,7 @@ export default function Home() {
         const { message } = error.response.data;
         if (message === 'Senha incorreta') {
           setErrors({ password: message });
-        }else{
+        } else {
           setErrors({ email: message });
         }
       } else {
@@ -61,64 +64,88 @@ export default function Home() {
 
   return (
     <>
-      <Container maxWidth="sm">
-        <Formik
-          initialValues={initialValues}
-          validationSchema={loginUserSchema}
-          onSubmit={handleSubmit}
-        >
-          <Form>
-            <FormControl fullWidth margin="normal">
-              <FormLabel>E-mail</FormLabel>
-              <Field
-                as={TextField}
-                id="email"
-                name="email"
-                fullWidth
-                margin="normal"
-                type="text"
-              />
-              <ErrorMessage
-                name="email"
-                component="div"
-                className={styles["error-text"]}
-              />
-            </FormControl>
+      <Container className={styles["ContainerAll"]} maxWidth>
+        <Container className={styles["containerImg"]} />
+        <Container className={styles["containerMain"]}>
+          <main>
+            <Image
+              src={Logo}
+              width={55}
+              height={55}
+              alt="Picture of the author"
+              style={{ marginBottom: 56 }}
+            />
+            <aside className={styles['aside']}>
+              <p className={styles["login"]}>Login</p>
+              <p className={styles['formText']}>Faça o login com os dados que você inseriu durante o seu registro.</p>
+            </aside>
 
-            <FormControl fullWidth margin="normal">
-              <FormLabel>Senha</FormLabel>
-              <Field
-                as={TextField}
-                id="password"
-                name="password"
-                fullWidth
-                margin="normal"
-                type={showPassword ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleTogglePasswordVisibility}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityIcon /> :  <VisibilityOffIcon />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <ErrorMessage
-                name="password"
-                component="div"
-                className={styles["error-text"]}
-              />
-            </FormControl>
+            <Formik
+              initialValues={initialValues}
+              validationSchema={loginUserSchema}
+              onSubmit={handleSubmit}
+            >
+              <Form>
+                <FormControl fullWidth margin="normal" >
+                  <FormLabel>E-mail</FormLabel>
+                  <Field
+                    as={TextField}
+                    id="email"
+                    name="email"
+                    fullWidth
+                    margin="normal"
+                    type="text"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className={styles["error-text"]}
+                  />
+                </FormControl>
 
-            <Button fullWidth variant="contained" type="submit" color="primary">
-              Entrar
-            </Button>
-          </Form>
-        </Formik>
+                <FormControl fullWidth margin="normal">
+                  <FormLabel>Senha</FormLabel>
+                  <Field
+                    as={TextField}
+                    id="password"
+                    name="password"
+                    fullWidth
+                    margin="normal"
+                    type={showPassword ? "text" : "password"}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleTogglePasswordVisibility}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className={styles["error-text"]}
+                  />
+                </FormControl>
+
+                <Button fullWidth variant="contained" type="submit" color="primary" className={styles['bttForm']}>
+                  Entrar
+                </Button>
+              </Form>
+            </Formik>
+          </main>
+          <footer className={styles["footerPage"]}>
+            <p>Inscrever-se</p>
+            <span>Faça o login com os dados que você inseriu durante o seu registro.</span>
+            <a href="/signup">
+              <Button fullWidth variant="outlined" className={styles["bttUp"]}>Criar uma conta</Button>
+            </a>
+          </footer>
+        </Container>
       </Container>
     </>
   );
