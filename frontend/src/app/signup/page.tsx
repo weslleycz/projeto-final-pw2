@@ -16,7 +16,9 @@ import { setCookie } from "cookies-next";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
 import styles from "./styles.module.scss";
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Logo from '../../../public/Logo.svg';
 
 const initialValues = {
   name: "",
@@ -64,114 +66,137 @@ const Signup = () => {
 
   return (
     <>
-      <Container maxWidth="sm">
-        <Formik
-          initialValues={initialValues}
-          validationSchema={createUserSchema}
-          onSubmit={handleSubmit}
-        >
-          <Form>
-            <FormControl fullWidth margin="normal">
-              <FormLabel>Nome completo</FormLabel>
-              <Field
-                as={TextField}
-                id="name"
-                name="name"
-                fullWidth
-                margin="normal"
-                type="text"
-              />
-              <ErrorMessage
-                name="name"
-                component="div"
-                className={styles["error-text"]}
-              />
-            </FormControl>
+      <Container className={styles["ContainerAll"]} maxWidth>
+        <Container className={styles["containerImg"]} />
+        <Container className={styles["containerMain"]}>
+          <main>
+            <Image
+              src={Logo}
+              width={55}
+              height={55}
+              alt="Picture of the author"
+              style={{ marginBottom: 46 }}
+            />
+            <aside className={styles['aside']}>
+              <p>Registro</p>
+            </aside>
 
-            <FormControl fullWidth margin="normal">
-              <FormLabel>E-mail</FormLabel>
-              <Field
-                as={TextField}
-                id="email"
-                name="email"
-                fullWidth
-                margin="normal"
-                type="email"
-              />
-              <ErrorMessage
-                name="email"
-                component="div"
-                className={styles["error-text"]}
-              />
-            </FormControl>
+            <Formik
+              initialValues={initialValues}
+              validationSchema={createUserSchema}
+              onSubmit={handleSubmit}
+            >
+              <Form>
+                <FormControl fullWidth margin="normal">
+                  <FormLabel>Nome completo</FormLabel>
+                  <Field
+                    as={TextField}
+                    id="name"
+                    name="name"
+                    fullWidth
+                    margin="normal"
+                    type="text"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className={styles["error-text"]}
+                  />
+                </FormControl>
 
-            <FormControl fullWidth margin="normal">
-              <FormLabel>Senha</FormLabel>
-              <Field
-                as={TextField}
-                id="password"
-                name="password"
-                fullWidth
-                margin="normal"
-                type={showPassword ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleTogglePasswordVisibility}>
-                        {showPassword ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <ErrorMessage
-                name="password"
-                component="div"
-                className={styles["error-text"]}
-              />
-            </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <FormLabel>E-mail</FormLabel>
+                  <Field
+                    as={TextField}
+                    id="email"
+                    name="email"
+                    fullWidth
+                    margin="normal"
+                    type="email"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className={styles["error-text"]}
+                  />
+                </FormControl>
 
-            <FormControl fullWidth margin="normal">
-              <FormLabel>Confirme sua senha</FormLabel>
-              <Field
-                as={TextField}
-                id="passwordConfirm"
-                name="passwordConfirm"
-                fullWidth
-                margin="normal"
-                type={showPasswordConfirm ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleTogglePasswordConfirmVisibility}
-                      >
-                        {showPasswordConfirm ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <ErrorMessage
-                name="passwordConfirm"
-                component="div"
-                className={styles["error-text"]}
-              />
-            </FormControl>
+                <FormControl fullWidth margin="normal">
+                  <FormLabel>Senha</FormLabel>
+                  <Field
+                    as={TextField}
+                    id="password"
+                    name="password"
+                    fullWidth
+                    margin="normal"
+                    type={showPassword ? "text" : "password"}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={handleTogglePasswordVisibility}>
+                            {showPassword ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className={styles["error-text"]}
+                  />
+                </FormControl>
 
-            <Button fullWidth variant="contained" type="submit" color="primary">
-              Entrar
-            </Button>
-          </Form>
-        </Formik>
+                <FormControl fullWidth margin="normal">
+                  <FormLabel>Confirme sua senha</FormLabel>
+                  <Field
+                    as={TextField}
+                    id="passwordConfirm"
+                    name="passwordConfirm"
+                    fullWidth
+                    margin="normal"
+                    type={showPasswordConfirm ? "text" : "password"}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleTogglePasswordConfirmVisibility}
+                          >
+                            {showPasswordConfirm ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <ErrorMessage
+                    name="passwordConfirm"
+                    component="div"
+                    className={styles["error-text"]}
+                  />
+                </FormControl>
+
+                <Button fullWidth variant="contained" type="submit" color="primary">
+                Cadastre-se
+                </Button>
+              </Form>
+            </Formik>
+          </main>
+          <footer className={styles["footerPage"]}>
+            <p>Tem conta? </p>
+            <span>Visite a página de login.</span>
+            <a href="/">
+              <Button fullWidth variant="outlined" className={styles["bttUp"]}>Entrar</Button>
+            </a>
+          </footer>
+        </Container>
       </Container>
     </>
   );
