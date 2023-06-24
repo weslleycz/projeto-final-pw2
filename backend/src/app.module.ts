@@ -8,10 +8,11 @@ import { BcryptService } from './services/bcrypt.service';
 import { JwtGuardMiddleware } from './middlewares/jwt-guard/jwt-guard.middleware';
 import { FilesController } from './controllers/files/files.controller';
 import { GridFsService } from './services/gridfs.service';
+import { PostController } from './controllers/post/post.controller';
 
 @Module({
   imports: [],
-  controllers: [AppController, UserController, FilesController],
+  controllers: [AppController, UserController, FilesController, PostController],
   providers: [
     AppService,
     PrismaService,
@@ -31,6 +32,10 @@ export class AppModule {
     consumer.apply(JwtGuardMiddleware).forRoutes({
       path: 'files/upload/avatar',
       method: RequestMethod.PUT,
+    });
+    consumer.apply(JwtGuardMiddleware).forRoutes({
+      path: 'post',
+      method: RequestMethod.POST,
     });
   }
 }

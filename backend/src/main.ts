@@ -15,6 +15,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('User')
     .addTag('Files')
+    .addTag('Post')
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
