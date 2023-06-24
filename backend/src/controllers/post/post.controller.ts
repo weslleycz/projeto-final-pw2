@@ -5,6 +5,8 @@ import {
   HttpStatus,
   Post,
   Headers,
+  Get,
+  Param,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -12,12 +14,15 @@ import {
   ApiTags,
   ApiHeader,
   ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 import { BaseController } from 'src/common/BaseController.common';
 import { CreatePostResponse } from 'src/schemas/CreatePostResponse';
 import { JWTService } from 'src/services/jwt.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { CreatePostDto } from 'src/validators/Post.dtos';
+import { Post as IPost } from '@prisma/client';
+import { ListPostResponse } from 'src/schemas/ListPostResponse';
 
 type IJWT = {
   data: string;
@@ -32,11 +37,38 @@ export class PostController extends BaseController {
   ) {
     super();
   }
-  getAll(): Promise<any[]> {
-    throw new Error('Method not implemented.');
+  @Get()
+  @ApiOperation({
+    summary: 'Lista todas as postagens',
+    description: 'Rota para listar todas as postagens.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna uma lista de postagens',
+    type: ListPostResponse,
+    isArray: true,
+  })
+  async getAll(): Promise<IPost[]> {
+    return await this.prismaService.post.findMany();
   }
-  getById(id: string): Promise<any> {
-    throw new Error('Method not implemented.');
+
+  @Get('/:id')
+  @ApiOperation({
+    summary: 'Retorna uma postagem por id',
+    description: 'Rota que retorna uma postagem por id',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna um postagem',
+    type: ListPostResponse,
+  })
+  @ApiParam({ name: 'id', description: 'ID da postagem' })
+  async getById(@Param('id') id: string): Promise<IPost> {
+    return await this.prismaService.post.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
   @ApiOperation({

@@ -6,6 +6,7 @@ import {
   MaxLength,
   Matches,
 } from 'class-validator';
+import { Post } from '@prisma/client';
 
 import { ApiProperty } from '@nestjs/swagger';
 import { Match } from 'src/decorators/match.decorator';
