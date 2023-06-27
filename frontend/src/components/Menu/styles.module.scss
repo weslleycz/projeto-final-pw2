@@ -29,6 +29,21 @@
   display: flex;
 }
 
+.btn-off-esc {
+  border: none;
+  text-align: left;
+  position: relative;
+  padding-left: 16px;
+  overflow: hidden;
+  align-items: center;
+  color: #000000;
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  padding-bottom: 3%;
+  background-color: #ffffff;
+}
+
 .btn-off:hover {
     opacity: 0.8;
 }

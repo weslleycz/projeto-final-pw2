@@ -11,6 +11,7 @@
         font-size: 93.75%;
     }
 }
+$mediumScreen: 960px;
 
 html,
 body,
@@ -162,6 +163,14 @@ body {
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
+
+      @media screen and (min-width: $mediumScreen + 1) {
+        &::-webkit-scrollbar {
+            display: none;
+          }
+          overflow: hidden;
+      }
+    
 }
 
 body,

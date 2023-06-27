@@ -5,7 +5,7 @@ $mediumScreen: 960px;
   background-color: #ffffff;
   @media screen and (min-width: $mediumScreen + 1) {
     width: 100%;
-    padding:6%;
+    padding:4%;
     margin: 2%;
   }
 
@@ -14,7 +14,18 @@ $mediumScreen: 960px;
     width:89%;
     margin: 2%;
   }
-  
+}
+
+.container-likes{
+  display: flex;
+  justify-content: flex-end;
+ 
+  @media screen and (min-width: $mediumScreen + 1) {
+    width: 90%;
+  }  
+  @media screen and (max-width: $smallScreen) {
+    margin-top: 2%;
+  }
 
 }
 
@@ -37,3 +48,12 @@ $mediumScreen: 960px;
     margin-top: 2%;
     margin-bottom: 2%;
 }
+
+.footer-container{
+  color: #A49E9E;
+  font-size: small;
+  .footer-iten{
+    align-items: center;
+  }
+}
+

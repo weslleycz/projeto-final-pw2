@@ -3,10 +3,19 @@ import { AvatarHeader } from "../AvatarHeader";
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { deleteCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export const Menu = () => {
   const pathname = usePathname();
+
+  const router = useRouter();
+
+  const handlingEsc = () => {
+    deleteCookie("token")
+    router.push("/");
+  }
 
   return (
     <>
@@ -71,6 +80,18 @@ export const Menu = () => {
                 </button>
               </Link>
             )}
+            <button onClick={()=>handlingEsc()} className={styles["btn-off-esc"]}>
+              <span></span>
+              <Box className={styles["btn-text"]}>
+                <Image
+                  src="/LogoutOutlined.svg"
+                  width={30}
+                  height={30}
+                  alt="Feed"
+                />
+                <strong>Sair</strong>
+              </Box>
+            </button>
           </Stack>
         </Box>
       </Grid>

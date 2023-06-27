@@ -1,16 +1,30 @@
 $smallScreen: 600px;
 $mediumScreen: 960px;
+$scrollbar-color: #44F1A6;
 .container {
-
-//   @media screen and (max-width: $smallScreen) {
-
-//   }
-
   @media screen and (min-width: $mediumScreen + 1) {
     overflow-y: scroll;
     overflow-x: hidden;
     height: 500px;
     width: 1000px;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+  
+    &::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background-color: $scrollbar-color;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: darken($scrollbar-color, 10%);
+    }
+  }
+  @media screen and (max-width: $smallScreen) {
+    padding-top: 12%;
   }
 
 }

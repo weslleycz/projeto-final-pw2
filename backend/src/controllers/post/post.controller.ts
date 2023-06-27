@@ -49,7 +49,11 @@ export class PostController extends BaseController {
     isArray: true,
   })
   async getAll(): Promise<IPost[]> {
-    return await this.prismaService.post.findMany();
+    return await this.prismaService.post.findMany({
+      include: {
+        comments: true,
+      },
+    });
   }
 
   @Get('/:id')

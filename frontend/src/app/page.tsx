@@ -1,9 +1,10 @@
 "use client";
 import { loginUserSchema } from "@/schema/loginUserSchema";
 import { api } from "@/services/apí";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
+  Box,
   Button,
   Container,
   FormControl,
@@ -16,9 +17,10 @@ import { setCookie } from "cookies-next";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
 import styles from "./styles.module.scss";
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import Logo from '../../public/Logo.svg';
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Logo from "../../public/Logo.svg";
+import Link from "next/link";
 
 const initialValues = {
   email: "",
@@ -28,7 +30,7 @@ const initialValues = {
 type ISubmit = {
   email: string;
   password: string;
-}
+};
 
 export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +47,7 @@ export default function Home() {
     } catch (error: any) {
       if (error.response && error.response.data) {
         const { message } = error.response.data;
-        if (message === 'Senha incorreta') {
+        if (message === "Senha incorreta") {
           setErrors({ password: message });
         } else {
           setErrors({ email: message });
@@ -63,20 +65,23 @@ export default function Home() {
 
   return (
     <>
-      <Container className={styles["ContainerAll"]} maxWidth>
+      <Box className={styles["ContainerAll"]}>
         <Container className={styles["containerImg"]} />
         <Container className={styles["containerMain"]}>
           <main>
             <Image
               src={Logo}
-              width={55}
-              height={55}
+              width={45}
+              height={45}
               alt="Picture of the author"
-              style={{ marginBottom: 46 }}
+              style={{ marginBottom: 2 }}
             />
-            <aside className={styles['aside']}>
+            <aside className={styles["aside"]}>
               <p className={styles["login"]}>Login</p>
-              <p className={styles['formText']}>Faça o login com os dados que você inseriu durante o seu registro.</p>
+              <p className={styles["formText"]}>
+                Faça o login com os dados que você inseriu durante o seu
+                registro.
+              </p>
             </aside>
 
             <Formik
@@ -85,15 +90,15 @@ export default function Home() {
               onSubmit={handleSubmit}
             >
               <Form>
-                <FormControl fullWidth margin="normal" >
+                <FormControl fullWidth margin="dense">
                   <FormLabel>E-mail</FormLabel>
                   <Field
                     as={TextField}
                     id="email"
                     name="email"
                     fullWidth
-                    margin="normal"
                     type="text"
+                    inputProps={{ style: { height: "14px" } }}
                   />
                   <ErrorMessage
                     name="email"
@@ -102,15 +107,15 @@ export default function Home() {
                   />
                 </FormControl>
 
-                <FormControl fullWidth margin="normal">
+                <FormControl fullWidth margin="dense">
                   <FormLabel>Senha</FormLabel>
                   <Field
                     as={TextField}
                     id="password"
                     name="password"
                     fullWidth
-                    margin="normal"
                     type={showPassword ? "text" : "password"}
+                    inputProps={{ style: { height: "14px" } }}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -118,7 +123,11 @@ export default function Home() {
                             onClick={handleTogglePasswordVisibility}
                             edge="end"
                           >
-                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                            {showPassword ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -131,7 +140,13 @@ export default function Home() {
                   />
                 </FormControl>
 
-                <Button fullWidth variant="contained" type="submit" color="primary" className={styles['bttForm']}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  type="submit"
+                  color="primary"
+                  className={styles["bttForm"]}
+                >
                   Entrar
                 </Button>
               </Form>
@@ -139,13 +154,17 @@ export default function Home() {
           </main>
           <footer className={styles["footerPage"]}>
             <p>Inscrever-se</p>
-            <span>Faça o login com os dados que você inseriu durante o seu registro.</span>
-            <a href="/signup">
-              <Button fullWidth variant="outlined" className={styles["bttUp"]}>Criar uma conta</Button>
-            </a>
+            <span>
+              Faça o login com os dados que você inseriu durante o seu registro.
+            </span>
+            <Link href="/signup">
+              <Button fullWidth variant="outlined" className={styles["bttUp"]}>
+                Criar uma conta
+              </Button>
+            </Link>
           </footer>
         </Container>
-      </Container>
+      </Box>
     </>
   );
 }

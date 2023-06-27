@@ -4,6 +4,7 @@ import { api } from "@/services/apí";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
+  Box,
   Button,
   Container,
   FormControl,
@@ -14,11 +15,12 @@ import {
 } from "@mui/material";
 import { setCookie } from "cookies-next";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Logo from "../../../public/Logo.svg";
 import styles from "./styles.module.scss";
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import Logo from '../../../public/Logo.svg';
 
 const initialValues = {
   name: "",
@@ -66,18 +68,18 @@ const Signup = () => {
 
   return (
     <>
-      <Container className={styles["ContainerAll"]} maxWidth>
+      <Box className={styles["ContainerAll"]}>
         <Container className={styles["containerImg"]} />
         <Container className={styles["containerMain"]}>
-          <main>
-            <Image
+        <Image
               src={Logo}
-              width={55}
-              height={55}
+              width={45}
+              height={45}
               alt="Picture of the author"
-              style={{ marginBottom: 46 }}
+              style={{ marginBottom: 5 }}
             />
-            <aside className={styles['aside']}>
+          <main>
+            <aside className={styles["aside"]}>
               <p>Registro</p>
             </aside>
 
@@ -87,14 +89,14 @@ const Signup = () => {
               onSubmit={handleSubmit}
             >
               <Form>
-                <FormControl fullWidth margin="normal">
+                <FormControl fullWidth margin="dense">
                   <FormLabel>Nome completo</FormLabel>
                   <Field
                     as={TextField}
                     id="name"
                     name="name"
                     fullWidth
-                    margin="normal"
+                    inputProps={{ style: { height: '14px' } }}
                     type="text"
                   />
                   <ErrorMessage
@@ -104,15 +106,14 @@ const Signup = () => {
                   />
                 </FormControl>
 
-                <FormControl fullWidth margin="normal">
+                <FormControl fullWidth margin="dense">
                   <FormLabel>E-mail</FormLabel>
                   <Field
                     as={TextField}
                     id="email"
                     name="email"
-                    fullWidth
-                    margin="normal"
                     type="email"
+                    inputProps={{ style: { height: "14px" } }}
                   />
                   <ErrorMessage
                     name="email"
@@ -121,15 +122,15 @@ const Signup = () => {
                   />
                 </FormControl>
 
-                <FormControl fullWidth margin="normal">
+                <FormControl fullWidth margin="dense">
                   <FormLabel>Senha</FormLabel>
                   <Field
                     as={TextField}
                     id="password"
                     name="password"
                     fullWidth
-                    margin="normal"
                     type={showPassword ? "text" : "password"}
+                    inputProps={{ style: { height: '14px' } }}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -151,16 +152,17 @@ const Signup = () => {
                   />
                 </FormControl>
 
-                <FormControl fullWidth margin="normal">
+                <FormControl fullWidth margin="dense">
                   <FormLabel>Confirme sua senha</FormLabel>
                   <Field
                     as={TextField}
                     id="passwordConfirm"
                     name="passwordConfirm"
+                    inputProps={{ style: { height: '14px' } }}
                     fullWidth
-                    margin="normal"
                     type={showPasswordConfirm ? "text" : "password"}
                     InputProps={{
+                      height: "14px",
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
@@ -183,8 +185,14 @@ const Signup = () => {
                   />
                 </FormControl>
 
-                <Button fullWidth variant="contained" type="submit" color="primary">
-                Cadastre-se
+                <Button
+                  fullWidth
+                  variant="contained"
+                  type="submit"
+                  color="primary"
+                  className={styles["bttUp"]}
+                >
+                  Cadastre-se
                 </Button>
               </Form>
             </Formik>
@@ -192,12 +200,14 @@ const Signup = () => {
           <footer className={styles["footerPage"]}>
             <p>Tem conta? </p>
             <span>Visite a página de login.</span>
-            <a href="/">
-              <Button fullWidth variant="outlined" className={styles["bttUp"]}>Entrar</Button>
-            </a>
+            <Link href="/">
+              <Button fullWidth variant="outlined" className={styles["bttUp"]}>
+                Entrar
+              </Button>
+            </Link>
           </footer>
         </Container>
-      </Container>
+      </Box>
     </>
   );
 };
