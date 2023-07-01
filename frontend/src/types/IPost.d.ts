@@ -3,7 +3,8 @@ export type IPost = {
     text: string;
     image: string;
     date: string;
-    likes: number;
+    likes: [];
     userId: string;
     comments:[]
+    // refetch: ()=>void;
   };

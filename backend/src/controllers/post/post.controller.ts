@@ -7,6 +7,7 @@ import {
   Headers,
   Get,
   Param,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -16,7 +17,6 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { BaseController } from 'src/common/BaseController.common';
 import { CreatePostResponse } from 'src/schemas/CreatePostResponse';
 import { JWTService } from 'src/services/jwt.service';
 import { PrismaService } from 'src/services/prisma.service';
@@ -30,13 +30,11 @@ type IJWT = {
 
 @Controller('post')
 @ApiTags('Post')
-export class PostController extends BaseController {
+export class PostController {
   constructor(
     private prismaService: PrismaService,
     private jWTService: JWTService,
-  ) {
-    super();
-  }
+  ) {}
   @Get()
   @ApiOperation({
     summary: 'Lista todas as postagens',
@@ -105,7 +103,7 @@ export class PostController extends BaseController {
         await this.prismaService.post.create({
           data: {
             date: new Date().toString(),
-            likes: 0,
+            likes: [],
             text,
             userId: id.data,
           },
@@ -123,7 +121,7 @@ export class PostController extends BaseController {
         await this.prismaService.post.create({
           data: {
             date: new Date().toString(),
-            likes: 0,
+            likes: [],
             text,
             userId: id.data,
             image: image,
@@ -138,10 +136,49 @@ export class PostController extends BaseController {
       }
     }
   }
-  update(id: string, data: any): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
   delete(id: string): Promise<string> {
     throw new Error('Method not implemented.');
+  }
+
+  @Get('/like/:id')
+  @ApiParam({ name: 'id', description: 'ID da postagem' })
+  async likePost(
+    @Param('id') id: string,
+    @Headers() headers: Record<string, string>,
+  ) {
+    try {
+      const token = <IJWT>this.jWTService.decode(headers.token);
+      const post = await this.prismaService.post.findUnique({
+        where: {
+          id,
+        },
+      });
+      const likes = Object.values(post.likes);
+      const index = likes.indexOf(token.data);
+      if (likes.includes(token.data)) {
+        likes.splice(index, 1);
+        await this.prismaService.post.update({
+          where: {
+            id,
+          },
+          data: {
+            likes,
+          },
+        });
+      } else {
+        likes.push(token.data);
+        await this.prismaService.post.update({
+          where: {
+            id,
+          },
+          data: {
+            likes,
+          },
+        });
+      }
+      return { message: 'like dado com sucesso' };
+    } catch (error) {
+      throw new HttpException('Não é possível da like', HttpStatus.BAD_REQUEST);
+    }
   }
 }

@@ -1,23 +1,79 @@
 import { Avatar, Box, Divider, Stack, makeStyles } from "@mui/material";
 import styles from "./styles.module.scss";
-import { IPost } from "@/types/IPost";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Image from "next/image";
+import { api } from "@/services/apí";
+import { getCookie } from "cookies-next";
+import { useQuery } from "react-query";
 
-export const Post = ({ date, image, likes, text, userId, comments }: IPost) => {
+export type IPost = {
+  id: string;
+  text: string;
+  image: string;
+  date: string;
+  likes: [];
+  userId: string;
+  comments: [];
+  refetch: () => void;
+  userIdPerfil: string;
+};
+
+export const Post = ({
+  date: dateTime,
+  image,
+  likes,
+  text,
+  userId,
+  comments,
+  id,
+  userIdPerfil,
+  refetch,
+}: IPost) => {
+  const token = getCookie("token");
+  const { data, isLoading } = useQuery("getUser", async () => {
+    try {
+      const user = await api.get("/user/private/token", {
+        headers: {
+          token,
+        },
+      });
+      return user?.data;
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  const likesPost = async (refetch: () => void) => {
+    await api.get(`/post/like/${id}`, {
+      headers: {
+        token,
+      },
+    });
+    refetch();
+  };
   return (
     <>
       <Box className={styles.container}>
-        <Box  className={styles['container-likes']} >
-        <Image
-          className={styles.logo}
-          src="/Likes.svg"
-          width={25}
-          height={25}
-          alt="Likes"
-          style={{ marginLeft: 'auto' }}
-        />
+        <Box className={styles["container-likes"]}>
+          {likes.includes(userIdPerfil) ? <>
+            <Image
+            onClick={() => likesPost(refetch)}
+            className={styles.logo}
+            src="/Likes2.svg"
+            width={25}
+            height={25}
+            alt="Likes"
+            style={{ marginLeft: "auto", cursor: "pointer" }}
+          />
+          </> : <>          <Image
+            onClick={() => likesPost(refetch)}
+            className={styles.logo}
+            src="/Likes1.svg"
+            width={25}
+            height={25}
+            alt="Likes"
+            style={{ marginLeft: "auto", cursor: "pointer" }}
+          /></>}
         </Box>
         <Box>
           <Stack
@@ -25,16 +81,21 @@ export const Post = ({ date, image, likes, text, userId, comments }: IPost) => {
             direction="row"
             spacing={2}
           >
-            <Avatar
-              src={`${process.env.API_Url}/files/avatar/${userId}`}
-              sx={{ width: 56, height: 56 }}
-            >
-              H
-            </Avatar>
+            {isLoading ? (
+              <></>
+            ) : (
+              <Avatar
+                src={`${process.env.API_Url}/files/avatar/${userId}`}
+                sx={{ width: 56, height: 56, bgcolor: "#3BD6CC" }}
+              >
+                {data.name[0]}
+              </Avatar>
+            )}
+
             <Box>
               <strong className={styles["avatar-text"]}>John Doe</strong>
               <p className={styles["avatar-date"]}>
-                {formatDistanceToNow(new Date(date), {
+                {formatDistanceToNow(new Date(dateTime), {
                   addSuffix: true,
                   locale: ptBR,
                 }).toString()}
@@ -54,12 +115,12 @@ export const Post = ({ date, image, likes, text, userId, comments }: IPost) => {
               >
                 <Image
                   className={styles.logo}
-                  src="/Likes.svg"
+                  src="/Likes1.svg"
                   width={12}
                   height={12}
                   alt="Likes"
                 />
-                <p>{`${likes} Likes`}</p>
+                <p>{`${likes.length} Likes`}</p>
               </Stack>
             </Box>
             <Box>

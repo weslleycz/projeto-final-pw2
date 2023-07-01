@@ -37,5 +37,9 @@ export class AppModule {
       path: 'post',
       method: RequestMethod.POST,
     });
+    consumer.apply(JwtGuardMiddleware).forRoutes({
+      path: '/post/like/:id',
+      method: RequestMethod.GET,
+    });
   }
 }

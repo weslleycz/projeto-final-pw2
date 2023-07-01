@@ -21,7 +21,7 @@ export class ListPostResponse implements Post {
   @ApiProperty({
     description: 'Quantidade de likes',
   })
-  likes: number;
+  likes: string;
   @ApiProperty({
     description: 'ID do usuário',
   })

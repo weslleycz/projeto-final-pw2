@@ -53,7 +53,7 @@ export class UserController extends BaseController {
     type: User,
     isArray: true,
   })
-  async getAll(): Promise<IUser[]> {
+  async getAll(): Promise<any[]> {
     return await this.prismaService.user.findMany({
       select: {
         avatar: true,
@@ -117,7 +117,7 @@ export class UserController extends BaseController {
   @ApiParam({ name: 'id', description: 'ID do usuário' })
   @ApiResponse({ status: 200, description: 'Usuário encontrado', type: User })
   @ApiResponse({ status: 400, description: 'Usuário não encontrado' })
-  async getById(@Param('id') id: string): Promise<IUser> {
+  async getById(@Param('id') id: string): Promise<any> {
     try {
       return await this.prismaService.user.findFirst({
         where: {
