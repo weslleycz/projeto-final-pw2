@@ -7,7 +7,8 @@ import {
   Headers,
   Get,
   Param,
-  Patch,
+  Req,
+  Res,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -23,6 +24,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { CreatePostDto } from 'src/validators/Post.dtos';
 import { Post as IPost } from '@prisma/client';
 import { ListPostResponse } from 'src/schemas/ListPostResponse';
+import { Response, Request } from 'express';
 
 type IJWT = {
   data: string;
@@ -65,7 +67,7 @@ export class PostController {
     type: ListPostResponse,
   })
   @ApiParam({ name: 'id', description: 'ID da postagem' })
-  async getById(@Param('id') id: string): Promise<IPost> {
+  async getById(@Param('id') id: string) {
     return await this.prismaService.post.findUnique({
       where: {
         id,

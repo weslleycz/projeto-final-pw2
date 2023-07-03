@@ -40,7 +40,7 @@ export const MenuMobile = () => {
             </Link>
           )}
         </Box>
-        <Box className={styles["iten-menu"]}>
+        <Box sx={{cursor:"pointer"}} className={styles["iten-menu"]}>
           <Image onClick={()=>handlingEsc()} className={styles["btn-off-esc"]} src="/LogoutOutlined.svg" width={25} height={25} alt="Feed" />
         </Box>
       </div>

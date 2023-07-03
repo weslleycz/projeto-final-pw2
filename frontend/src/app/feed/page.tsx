@@ -9,7 +9,7 @@ import { api } from "@/services/apí";
 import { IPost } from "@/types/IPost";
 import { CircularProgress } from "@mui/material";
 import { deleteCookie, getCookie } from "cookies-next";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +26,23 @@ const Feed = () => {
     const posts = await api.get("/post");
     return posts?.data.reverse();
   });
+
+  useEffect(() => {
+    const eventSource = new EventSource(process.env.API_Url + "/stream");
+    eventSource.addEventListener("message", (event) => {
+      if (!isLoading) {
+        if (data.length != event.data) {
+          refetch()
+        }
+      }
+    });
+  
+    return () => {
+      eventSource.close();
+    };
+  }, [data, isLoading, refetch]);
+
+
 
   const router = useRouter();
 

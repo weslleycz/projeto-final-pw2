@@ -9,10 +9,11 @@ import { JwtGuardMiddleware } from './middlewares/jwt-guard/jwt-guard.middleware
 import { FilesController } from './controllers/files/files.controller';
 import { GridFsService } from './services/gridfs.service';
 import { PostController } from './controllers/post/post.controller';
+import { StreamController } from './controllers/stream/stream.controller';
 
 @Module({
   imports: [],
-  controllers: [AppController, UserController, FilesController, PostController],
+  controllers: [AppController, UserController, FilesController, PostController, StreamController],
   providers: [
     AppService,
     PrismaService,
