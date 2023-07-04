@@ -1,0 +1,44 @@
+$smallScreen: 600px;
+$mediumScreen: 960px;
+
+.continer {
+  background-color: #ffffff;
+  @media screen and (min-width: $mediumScreen + 1) {
+    width: 100%;
+    padding: 5%;
+    margin: 2%;
+  }
+
+  @media screen and (max-width: $smallScreen) {
+    width: 95%;
+    margin-top: 3%;
+    margin-left: 2%;
+  }
+}
+
+.cont {
+  padding: 4%;
+  @media screen and (min-width: $mediumScreen + 1) {
+    width: 80%;
+  }
+
+  @media screen and (max-width: $smallScreen) {
+    width: 95%;
+    margin-bottom: 2%;
+  }
+
+}
+
+.footer{
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 1%;
+
+
+
+  @media screen and (max-width: $smallScreen) {
+    width: 95%;
+    padding-bottom: 2%;
+  }
+}

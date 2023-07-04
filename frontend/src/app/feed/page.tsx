@@ -14,14 +14,6 @@ import { useQuery } from "react-query";
 import { useRouter } from "next/navigation";
 
 const Feed = () => {
-  const audioRef = useRef(null);
-
-  const handlePlay = () => {
-    if (audioRef.current) {
-      audioRef.current.play();
-    }
-  };
-
   const { data, isLoading, refetch } = useQuery("getPosts", async () => {
     const posts = await api.get("/post");
     return posts?.data.reverse();
@@ -32,17 +24,15 @@ const Feed = () => {
     eventSource.addEventListener("message", (event) => {
       if (!isLoading) {
         if (data.length != event.data) {
-          refetch()
+          refetch();
         }
       }
     });
-  
+
     return () => {
       eventSource.close();
     };
   }, [data, isLoading, refetch]);
-
-
 
   const router = useRouter();
 
@@ -64,20 +54,24 @@ const Feed = () => {
     }
   );
 
+  const scrollableDivRef = useRef(null);
+
+
   return (
     <>
       <Header />
       <Container>
         <div>
-          <audio ref={audioRef} src="./notification.wav" />
-          {/* <button onClick={handlePlay}>Novas postagens</button> */}
-          <ContainerFeed>
+          <ContainerFeed
+          refetch={refetch}
+          >
             {isLoading || userIsLoading ? (
               <CircularProgress />
             ) : (
               data.map((post: IPost) => {
                 return (
-                  <Post
+                  <Post 
+                    user={post.User}
                     userIdPerfil={userData.id}
                     refetch={refetch}
                     key={post.id}

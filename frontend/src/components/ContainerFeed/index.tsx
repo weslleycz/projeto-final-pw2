@@ -1,25 +1,26 @@
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { ReactNode, useRef } from "react";
 import styles from "./styles.module.scss";
+import { PostCreator } from "../PostCreator";
 
 type Props = {
-    children: ReactNode;
-  };
+  children: ReactNode;
+  refetch: any;
+};
 
-export const ContainerFeed = ({children}:Props) => {
-
-  const scrollableDivRef = useRef(null);
-
-  const handleScroll = () => {
-    const div = scrollableDivRef.current;
-    if (div.scrollTop === 0) {
-      console.log('Scroll está no topo');
-    }
-  };
-
-    return<>
-    <Box ref={scrollableDivRef} onScroll={handleScroll} className={styles.container}>
-    {children}
-    </Box>
-   </>
-}
+export const ContainerFeed = ({
+  children,
+  refetch
+}: Props) => {
+  const isSmallScreen = useMediaQuery("(max-width: 600px)");
+  return (
+    <>
+      <Box
+        className={styles.container}
+      >
+        <PostCreator refetch={refetch} />
+        {children}
+      </Box>
+    </>
+  );
+};

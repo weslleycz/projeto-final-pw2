@@ -6,6 +6,7 @@ import Image from "next/image";
 import { api } from "@/services/apí";
 import { getCookie } from "cookies-next";
 import { useQuery } from "react-query";
+import { useRef } from "react";
 
 export type IPost = {
   id: string;
@@ -17,6 +18,9 @@ export type IPost = {
   comments: [];
   refetch: () => void;
   userIdPerfil: string;
+  user: {
+    name: string;
+  };
 };
 
 export const Post = ({
@@ -29,6 +33,7 @@ export const Post = ({
   id,
   userIdPerfil,
   refetch,
+  user,
 }: IPost) => {
   const token = getCookie("token");
   const { data, isLoading } = useQuery("getUser", async () => {
@@ -43,6 +48,16 @@ export const Post = ({
       console.log(error);
     }
   });
+  const audioRef = useRef(null);
+
+
+
+  const handlePlay = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
+    }
+  };
+
   const likesPost = async (refetch: () => void) => {
     await api.get(`/post/like/${id}`, {
       headers: {
@@ -50,30 +65,41 @@ export const Post = ({
       },
     });
     refetch();
+    handlePlay()
   };
+
   return (
     <>
       <Box className={styles.container}>
         <Box className={styles["container-likes"]}>
-          {likes.includes(userIdPerfil) ? <>
-            <Image
-            onClick={() => likesPost(refetch)}
-            className={styles.logo}
-            src="/Likes2.svg"
-            width={25}
-            height={25}
-            alt="Likes"
-            style={{ marginLeft: "auto", cursor: "pointer" }}
-          />
-          </> : <>          <Image
-            onClick={() => likesPost(refetch)}
-            className={styles.logo}
-            src="/Likes1.svg"
-            width={25}
-            height={25}
-            alt="Likes"
-            style={{ marginLeft: "auto", cursor: "pointer" }}
-          /></>}
+          {likes.includes(userIdPerfil) ? (
+            <>
+              <audio ref={audioRef} src="./notification.wav" />
+              <Image
+                onClick={() => likesPost(refetch)}
+                className={styles.logo}
+                src="/Likes2.svg"
+                width={25}
+                height={25}
+                alt="Likes"
+                style={{ marginLeft: "auto", cursor: "pointer" }}
+              />
+            </>
+          ) : (
+            <>
+              {" "}
+              <audio ref={audioRef} src="./notification.wav" />
+              <Image
+                onClick={() => likesPost(refetch)}
+                className={styles.logo}
+                src="/Likes1.svg"
+                width={25}
+                height={25}
+                alt="Likes"
+                style={{ marginLeft: "auto", cursor: "pointer" }}
+              />
+            </>
+          )}
         </Box>
         <Box>
           <Stack
@@ -93,7 +119,7 @@ export const Post = ({
             )}
 
             <Box>
-              <strong className={styles["avatar-text"]}>John Doe</strong>
+              <strong className={styles["avatar-text"]}>{user.name}</strong>
               <p className={styles["avatar-date"]}>
                 {formatDistanceToNow(new Date(dateTime), {
                   addSuffix: true,
@@ -102,6 +128,15 @@ export const Post = ({
               </p>
             </Box>
           </Stack>
+          <figure>
+            {image ? (
+              <img
+                className={styles["post-img"]}
+                src={`${process.env.API_Url}/files/download/${image}`}
+                alt="Imagem da postagem"
+              ></img>
+            ) : null}
+          </figure>
           <p className={styles["post-title"]}>{text}</p>
         </Box>
         <Divider sx={{ width: "90%" }} />

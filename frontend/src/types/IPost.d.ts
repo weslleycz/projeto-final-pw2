@@ -6,5 +6,7 @@ export type IPost = {
     likes: [];
     userId: string;
     comments:[]
-    // refetch: ()=>void;
+    User:{
+      name: string
+    }
   };

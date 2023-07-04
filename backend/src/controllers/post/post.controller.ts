@@ -9,6 +9,7 @@ import {
   Param,
   Req,
   Res,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -25,6 +26,7 @@ import { CreatePostDto } from 'src/validators/Post.dtos';
 import { Post as IPost } from '@prisma/client';
 import { ListPostResponse } from 'src/schemas/ListPostResponse';
 import { Response, Request } from 'express';
+import { CacheService } from 'src/services/cache.service';
 
 type IJWT = {
   data: string;
@@ -36,6 +38,7 @@ export class PostController {
   constructor(
     private prismaService: PrismaService,
     private jWTService: JWTService,
+    private cacheService: CacheService,
   ) {}
   @Get()
   @ApiOperation({
@@ -49,11 +52,26 @@ export class PostController {
     isArray: true,
   })
   async getAll(): Promise<IPost[]> {
-    return await this.prismaService.post.findMany({
-      include: {
-        comments: true,
-      },
-    });
+    const postCache = <IPost[]>await this.cacheService.get('posts');
+    if (postCache === undefined) {
+      const posts = await this.prismaService.post.findMany({
+        include: {
+          comments: true,
+          User: {
+            select: {
+              avatar: true,
+              name: true,
+              id: true,
+              email: true,
+            },
+          },
+        },
+      });
+      await this.cacheService.set('posts', posts);
+      return posts;
+    } else {
+      return postCache;
+    }
   }
 
   @Get('/:id')
@@ -110,6 +128,20 @@ export class PostController {
             userId: id.data,
           },
         });
+        const posts = await this.prismaService.post.findMany({
+          include: {
+            comments: true,
+            User: {
+              select: {
+                avatar: true,
+                name: true,
+                id: true,
+                email: true,
+              },
+            },
+          },
+        });
+        await this.cacheService.set('posts', posts);
         return { message: 'postagem criada com sucesso' };
       } catch (error) {
         throw new HttpException(
@@ -129,6 +161,20 @@ export class PostController {
             image: image,
           },
         });
+        const posts = await this.prismaService.post.findMany({
+          include: {
+            comments: true,
+            User: {
+              select: {
+                avatar: true,
+                name: true,
+                id: true,
+                email: true,
+              },
+            },
+          },
+        });
+        await this.cacheService.set('posts', posts);
         return { message: 'postagem criada com sucesso' };
       } catch (error) {
         throw new HttpException(
@@ -138,11 +184,27 @@ export class PostController {
       }
     }
   }
-  delete(id: string): Promise<string> {
-    throw new Error('Method not implemented.');
+
+  @Delete('/:id')
+  @ApiOperation({ summary: 'Exclui uma postagem' })
+  @ApiParam({ name: 'id', description: 'ID da postagem' })
+  async delete(@Param('id') id: string) {
+    try {
+      await this.prismaService.post.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      throw new HttpException(
+        'Não é possível deletar a postagem',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @Get('/like/:id')
+  @ApiOperation({ summary: 'Dá um like em uma postagem' })
   @ApiParam({ name: 'id', description: 'ID da postagem' })
   async likePost(
     @Param('id') id: string,
@@ -167,6 +229,20 @@ export class PostController {
             likes,
           },
         });
+        const posts = await this.prismaService.post.findMany({
+          include: {
+            comments: true,
+            User: {
+              select: {
+                avatar: true,
+                name: true,
+                id: true,
+                email: true,
+              },
+            },
+          },
+        });
+        await this.cacheService.set('posts', posts);
       } else {
         likes.push(token.data);
         await this.prismaService.post.update({
@@ -177,6 +253,20 @@ export class PostController {
             likes,
           },
         });
+        const posts = await this.prismaService.post.findMany({
+          include: {
+            comments: true,
+            User: {
+              select: {
+                avatar: true,
+                name: true,
+                id: true,
+                email: true,
+              },
+            },
+          },
+        });
+        await this.cacheService.set('posts', posts);
       }
       return { message: 'like dado com sucesso' };
     } catch (error) {

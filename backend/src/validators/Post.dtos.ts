@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 export class CreatePostDto {
   @ApiProperty({ description: 'Texto da postagem' })
   @IsString()
-  @IsNotEmpty({ message: 'Você precisa fornecer um texto para postar' })
+  @IsOptional()
   text: string;
 
   @ApiProperty({ description: 'ID da imagem da postagem' })

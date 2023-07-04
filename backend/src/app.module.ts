@@ -10,16 +10,24 @@ import { FilesController } from './controllers/files/files.controller';
 import { GridFsService } from './services/gridfs.service';
 import { PostController } from './controllers/post/post.controller';
 import { StreamController } from './controllers/stream/stream.controller';
+import { CacheService } from './services/cache.service';
 
 @Module({
   imports: [],
-  controllers: [AppController, UserController, FilesController, PostController, StreamController],
+  controllers: [
+    AppController,
+    UserController,
+    FilesController,
+    PostController,
+    StreamController,
+  ],
   providers: [
     AppService,
     PrismaService,
     JWTService,
     BcryptService,
     GridFsService,
+    CacheService,
   ],
 })
 export class AppModule {
@@ -37,6 +45,10 @@ export class AppModule {
     consumer.apply(JwtGuardMiddleware).forRoutes({
       path: 'post',
       method: RequestMethod.POST,
+    });
+    consumer.apply(JwtGuardMiddleware).forRoutes({
+      path: 'post',
+      method: RequestMethod.DELETE,
     });
     consumer.apply(JwtGuardMiddleware).forRoutes({
       path: '/post/like/:id',

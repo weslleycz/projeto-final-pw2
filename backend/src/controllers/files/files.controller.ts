@@ -117,4 +117,62 @@ export class FilesController {
       throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND);
     }
   }
+
+  @ApiOperation({
+    summary: 'Baixar a imahem',
+    description: 'Rota que retorna a imagem.',
+  })
+  @Get('download/:id')
+  async getFile(@Param('id') id: string, @Res() res: Response) {
+    const fileStream = this.gridFsService.getFileStream(
+      ObjectId.createFromHexString(id),
+    );
+    res.set({
+      'Content-Type': 'application/octet-stream',
+      'Content-Disposition': `attachment; filename=${id}`,
+    });
+    (await fileStream).pipe(res);
+  }
+
+  @Put('upload')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Upload de arquivos' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Upload de file',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiHeader({
+    name: 'token',
+    description: 'Token de autenticação',
+    required: true,
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async upload(@UploadedFile() file) {
+    try {
+      const { buffer, originalname } = file;
+      const fileStream = new Readable();
+      fileStream.push(buffer);
+      fileStream.push(null);
+      const fileId = await this.gridFsService.uploadFile(
+        fileStream,
+        originalname,
+      );
+      return fileId;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Não é possível fazer upload desse arquivo',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }

@@ -57,3 +57,16 @@ $mediumScreen: 960px;
   }
 }
 
+.post-img{
+
+  height: auto;
+  margin-top: 1%;
+
+  @media screen and (min-width: $mediumScreen + 1) {
+    max-width: 92%;
+  }
+
+  @media screen and (max-width: $smallScreen) {
+    max-width: 100%;
+  }
+}
