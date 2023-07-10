@@ -1,5 +1,19 @@
-import { Body, Controller, Post, Headers } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Post,
+  Headers,
+  Param,
+  HttpException,
+  HttpStatus,
+  Get,
+} from '@nestjs/common';
+import {
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { JWTService } from 'src/services/jwt.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { CreateCommentDto } from 'src/validators/Comment.dto';
@@ -14,7 +28,7 @@ export class CommentController {
     private prismaService: PrismaService,
     private jWTService: JWTService,
   ) {}
-  @Post()
+  @Post('/:id')
   @ApiOperation({
     summary: 'Criar um comentario',
     description: 'Rota para criar comentario.',
@@ -27,13 +41,46 @@ export class CommentController {
     status: 400,
     description: 'Não é possível fazer o comentario',
   })
+  @ApiHeader({
+    name: 'token',
+    description: 'Token de autenticação',
+    required: true,
+  })
+  @ApiParam({ name: 'id', description: 'ID da postagem' })
   async create(
     @Body() { text }: CreateCommentDto,
     @Headers() headers: Record<string, string>,
+    @Param('id') postId: string,
   ) {
-    const id = <IJWT>this.jWTService.decode(headers.token);
+    const userId = <IJWT>this.jWTService.decode(headers.token);
     try {
-        await this.
-    } catch (error) {}
+      await this.prismaService.comment.create({
+        data: {
+          text,
+          date: new Date().toString(),
+          postId,
+          userId: userId.data,
+        },
+      });
+    } catch (error) {
+      throw new HttpException(
+        'Não é possível realizar a postagem',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Get('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de comentarios por postagem',
+  })
+  @ApiParam({ name: 'id', description: 'ID da postagem' })
+  async getComment(@Param('id') postId: string) {
+    return await this.prismaService.comment.findMany({
+      where: {
+        postId: postId,
+      },
+    });
   }
 }
