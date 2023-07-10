@@ -60,6 +60,9 @@ const Signup = () => {
       setCookie("token", res.data.token, {
         expires: expirationDate,
       });
+      setCookie("id", res.data.id, {
+        expires: expirationDate,
+      });
       router.push(`/feed`);
     } catch (error) {
       setErrors({ email: "E-mail já está cadastrado" });

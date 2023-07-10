@@ -1,12 +1,13 @@
-import { Avatar, Box, Divider, Stack, makeStyles } from "@mui/material";
-import styles from "./styles.module.scss";
+import { api } from "@/services/apí";
+import { Avatar, Box, Divider, Stack } from "@mui/material";
+import { getCookie } from "cookies-next";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Image from "next/image";
-import { api } from "@/services/apí";
-import { getCookie } from "cookies-next";
-import { useQuery } from "react-query";
+import Link from "next/link";
 import { useRef } from "react";
+import { useQuery } from "react-query";
+import styles from "./styles.module.scss";
 
 export type IPost = {
   id: string;
@@ -38,19 +39,13 @@ export const Post = ({
   const token = getCookie("token");
   const { data, isLoading } = useQuery("getUser", async () => {
     try {
-      const user = await api.get("/user/private/token", {
-        headers: {
-          token,
-        },
-      });
+      const user = await api.get(`/user/pubic/${userId}`);
       return user?.data;
     } catch (error) {
       console.log(error);
     }
   });
   const audioRef = useRef(null);
-
-
 
   const handlePlay = () => {
     if (audioRef.current) {
@@ -65,7 +60,7 @@ export const Post = ({
       },
     });
     refetch();
-    handlePlay()
+    handlePlay();
   };
 
   return (
@@ -110,23 +105,30 @@ export const Post = ({
             {isLoading ? (
               <></>
             ) : (
-              <Avatar
-                src={`${process.env.API_Url}/files/avatar/${userId}`}
-                sx={{ width: 56, height: 56, bgcolor: "#3BD6CC" }}
-              >
-                {data.name[0]}
-              </Avatar>
+              <>
+                <Link href={`/perfil/${userIdPerfil}`}>
+                  <Avatar
+                    src={`${process.env.API_Url}/files/avatar/${userId}`}
+                    sx={{ width: 56, height: 56, bgcolor: "#3BD6CC" }}
+                  >
+                    {data?.name[0]}
+                  </Avatar>
+                </Link>
+                <Box>
+                  <Link href={`/perfil/${userIdPerfil}`}>
+                    <strong className={styles["avatar-text"]}>
+                      {user?.name}
+                    </strong>
+                  </Link>
+                  <p className={styles["avatar-date"]}>
+                    {formatDistanceToNow(new Date(dateTime), {
+                      addSuffix: true,
+                      locale: ptBR,
+                    }).toString()}
+                  </p>
+                </Box>
+              </>
             )}
-
-            <Box>
-              <strong className={styles["avatar-text"]}>{user.name}</strong>
-              <p className={styles["avatar-date"]}>
-                {formatDistanceToNow(new Date(dateTime), {
-                  addSuffix: true,
-                  locale: ptBR,
-                }).toString()}
-              </p>
-            </Box>
           </Stack>
           <figure>
             {image ? (
@@ -171,7 +173,7 @@ export const Post = ({
                   height={12}
                   alt="comment"
                 />
-                <p>{`${comments.length} Comerciários`}</p>
+                <p>{`${comments?.length} Comerciários`}</p>
               </Stack>
             </Box>
           </Stack>

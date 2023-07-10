@@ -93,6 +93,25 @@ export class PostController {
     });
   }
 
+  @Get('/user/:id')
+  @ApiOperation({
+    summary: 'Retorna a lista de postagens do usraiorio por id',
+    description: 'Retorna a lista de postagens do usraiorio por id',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna a lista de postagens do usraiorio por id',
+    type: ListPostResponse,
+  })
+  @ApiParam({ name: 'id', description: 'ID do usuario' })
+  async getUserId(@Param('id') userId: string) {
+    return await this.prismaService.post.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
   @ApiOperation({
     summary: 'Criar postagem',
     description: 'Rota para criar postagem.',

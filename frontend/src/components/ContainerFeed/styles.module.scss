@@ -1,6 +1,6 @@
 $smallScreen: 600px;
 $mediumScreen: 960px;
-$scrollbar-color: #44F1A6;
+$scrollbar-color: #44f1a600;
 .container {
   @media screen and (min-width: $mediumScreen + 1) {
     overflow-y: scroll;
@@ -13,7 +13,7 @@ $scrollbar-color: #44F1A6;
     }
   
     &::-webkit-scrollbar-track {
-      background-color: #f1f1f1;
+      background-color: #f1f1f100;
     }
   
     &::-webkit-scrollbar-thumb {

@@ -21,6 +21,7 @@ const Feed = () => {
 
   useEffect(() => {
     const eventSource = new EventSource(process.env.API_Url + "/stream");
+    console.clear();
     eventSource.addEventListener("message", (event) => {
       if (!isLoading) {
         if (data.length != event.data) {
@@ -54,7 +55,6 @@ const Feed = () => {
     }
   );
 
-  const scrollableDivRef = useRef(null);
 
 
   return (
@@ -63,14 +63,14 @@ const Feed = () => {
       <Container>
         <div>
           <ContainerFeed
-          refetch={refetch}
+            refetch={refetch}
           >
             {isLoading || userIsLoading ? (
               <CircularProgress />
             ) : (
               data.map((post: IPost) => {
                 return (
-                  <Post 
+                  <Post
                     user={post.User}
                     userIdPerfil={userData.id}
                     refetch={refetch}

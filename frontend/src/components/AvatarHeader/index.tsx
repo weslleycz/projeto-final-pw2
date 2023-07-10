@@ -38,6 +38,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 export const AvatarHeader = () => {
   const router = useRouter();
   const token = getCookie("token");
+  const id = getCookie("id");
   const { data, isLoading } = useQuery("getUser", async () => {
     try {
       const user = await api.get("/user/private/token", {
@@ -45,6 +46,7 @@ export const AvatarHeader = () => {
           token,
         },
       });
+      console.clear();
       return user?.data;
     } catch (error) {
       deleteCookie("token");
@@ -53,7 +55,7 @@ export const AvatarHeader = () => {
   });
   return (
     <>
-      {isLoading || !token ? (
+      {isLoading && !token ? (
       <></>
       ) : (
         <Box className={styles.container}>
@@ -64,13 +66,13 @@ export const AvatarHeader = () => {
             variant="dot"
           >
             <Avatar
-              src={`${process.env.API_Url}/files/avatar/${data.id}`}
+              src={`${process.env.API_Url}/files/avatar/${id}`}
               sx={{ bgcolor: "#3BD6CC", width: 35, height: 35, marginLeft:1 }}
             >
-              {data.name[0]}
+             {data && data.name && data.name[0]}
             </Avatar>
           </StyledBadge>
-          <strong className={styles.text}>{data.name}</strong>
+          <strong className={styles.text}>{data?.name}</strong>
         </Stack>
       </Box>
       )}

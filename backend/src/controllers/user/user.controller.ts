@@ -81,9 +81,7 @@ export class UserController extends BaseController {
     status: 400,
     description: 'E-mail já está cadastrado',
   })
-  async create(
-    @Body() { email, name, password }: CreateUserDto,
-  ): Promise<CreateUserResponse> {
+  async create(@Body() { email, name, password }: CreateUserDto) {
     try {
       const cryptPassword = await this.bcryptService.hashPassword(password);
       const user = await this.prismaService.user.create({
@@ -97,7 +95,7 @@ export class UserController extends BaseController {
         },
       });
       const token = this.jWTService.login(user.id.toString());
-      return { token };
+      return { token, id: user.id };
     } catch (error) {
       throw new HttpException(
         'E-mail já está cadastrado',
@@ -118,8 +116,9 @@ export class UserController extends BaseController {
   @ApiResponse({ status: 200, description: 'Usuário encontrado', type: User })
   @ApiResponse({ status: 400, description: 'Usuário não encontrado' })
   async getById(@Param('id') id: string): Promise<any> {
+    console.log(id);
     try {
-      return await this.prismaService.user.findFirst({
+      const user = await this.prismaService.user.findFirst({
         where: {
           id,
         },
@@ -133,6 +132,7 @@ export class UserController extends BaseController {
           name: true,
         },
       });
+      return user;
     } catch (error) {
       throw new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST);
     }
@@ -206,9 +206,7 @@ export class UserController extends BaseController {
   })
   @ApiResponse({ status: 401, description: 'Email não vinculado' })
   @ApiResponse({ status: 400, description: 'Senha incorreta' })
-  async loginUser(
-    @Body() { email, password }: LoginUserDto,
-  ): Promise<LoginUserResponse> {
+  async loginUser(@Body() { email, password }: LoginUserDto) {
     const user = await this.prismaService.user.findFirst({
       where: {
         email,
@@ -217,7 +215,7 @@ export class UserController extends BaseController {
     if (user != null) {
       if (await this.bcryptService.comparePasswords(password, user.password)) {
         const token = this.jWTService.login(user.id.toString());
-        return { token };
+        return { token, id: user.id };
       } else {
         throw new HttpException('Senha incorreta', HttpStatus.UNAUTHORIZED);
       }

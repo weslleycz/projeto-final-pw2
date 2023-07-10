@@ -20,7 +20,7 @@ Siga as etapas abaixo para configurar e executar o EcoTracker localmente:
 3. Instale as dependências do frontend: `npm install`
 4. Navegue até a pasta do projeto do backend (Nest.js): `cd ../backend`
 5. Instale as dependências do backend: `npm install`
-6. Inicie o servidor do backend: `npm run start:dev`
+6. Inicie o servidor do backend: `npm run dev`
 7. Em outra janela do terminal, navegue até a pasta do frontend novamente: `cd ./frontend`
 8. Inicie o servidor do frontend: `npm run dev`
 
