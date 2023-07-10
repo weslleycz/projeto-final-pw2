@@ -1,19 +1,41 @@
 import { IUser } from "@/types/IUser";
 import { getCookie } from "cookies-next";
 import styles from "./styles.module.scss";
-import { Avatar, Box, Button, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
+import { FormeEdit } from "../FormeEdit";
 
-export const ProfileInfo = ({ id, name, cover, bio }: IUser) => {
+
+type Props = {
+  id: string;
+  name: string;
+  email: string;
+  bio: string;
+  avatar: string;
+  cover: string;
+  refetch: any;
+};
+
+export const ProfileInfo = ({
+  avatar,
+  bio,
+  cover,
+  email,
+  id,
+  name,
+  refetch,
+}: Props) => {
   const userId = getCookie("id");
   return (
     <>
       <Box className={styles.conteiner}>
-        <Box className={styles.cover}></Box>
+        <Box className={styles.cover}>
+          
+        </Box>
         <Box className={styles.cont}>
           <Box className={styles["conteiner-edit"]}>
             <Box className={styles.avatar}>
               <Avatar
-                src={`${process.env.API_Url}/files/avatar/${id}`}
+                src={`${process.env.API_Url}/files/download/${avatar}`}
                 sx={{
                   bgcolor: "#3BD6CC",
                   width: 125,
@@ -23,27 +45,28 @@ export const ProfileInfo = ({ id, name, cover, bio }: IUser) => {
                   marginTop: -9,
                   marginBottom: 1,
                 }}
-              >
-              </Avatar>
+              ></Avatar>
               <Typography fontWeight={"bold"} variant="h5" gutterBottom>
                 {name}
               </Typography>
             </Box>
             {userId === id ? (
-              <Button
-                sx={{
-                  marginLeft: 1,
-                  marginTop: -8,
-                }}
-                variant="outlined"
-              >
-                Editar perfil
-              </Button>
+              <FormeEdit
+                id={id}
+                name={name}
+                email={email}
+                bio={bio}
+                avatar={avatar}
+                cover={cover}
+                refetch={refetch}
+              />
             ) : null}
           </Box>
-          <Typography variant="subtitle2" gutterBottom>
-            {bio}
-          </Typography>
+          <Box className={styles["conteiner-bio"]}>
+            <Typography fontWeight={"bold"} variant="subtitle2" gutterBottom>
+              {bio}
+            </Typography>
+          </Box>
         </Box>
       </Box>
     </>

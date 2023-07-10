@@ -1,10 +1,10 @@
-import { useQuery } from "react-query";
+import { api } from "@/services/apí";
 import { Avatar, Badge, Box, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import styles from "./styles.module.scss";
 import { deleteCookie, getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-import { api } from "@/services/apí";
+import { useQuery } from "react-query";
+import styles from "./styles.module.scss";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -39,7 +39,7 @@ export const AvatarHeader = () => {
   const router = useRouter();
   const token = getCookie("token");
   const id = getCookie("id");
-  const { data, isLoading } = useQuery("getUser", async () => {
+  const { data, isLoading, refetch } = useQuery("getUserAvatar", async () => {
     try {
       const user = await api.get("/user/private/token", {
         headers: {
@@ -55,7 +55,7 @@ export const AvatarHeader = () => {
   });
   return (
     <>
-      {isLoading && !token ? (
+      {isLoading ? (
       <></>
       ) : (
         <Box className={styles.container}>
@@ -66,7 +66,7 @@ export const AvatarHeader = () => {
             variant="dot"
           >
             <Avatar
-              src={`${process.env.API_Url}/files/avatar/${id}`}
+              src={`${process.env.API_Url}/files/download/${data?.avatar}`}
               sx={{ bgcolor: "#3BD6CC", width: 35, height: 35, marginLeft:1 }}
             >
              {data && data.name && data.name[0]}

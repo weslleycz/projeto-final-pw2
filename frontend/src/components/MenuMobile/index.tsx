@@ -4,11 +4,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { deleteCookie } from "cookies-next";
+import { deleteCookie, getCookie } from "cookies-next";
 
 export const MenuMobile = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const userId = getCookie("id");
 
   const handlingEsc = () => {
     deleteCookie("token");
@@ -44,15 +45,15 @@ export const MenuMobile = () => {
           )}
         </Box>
         <Box className={styles["iten-menu"]}>
-          {pathname === "/perfil" ? (
+          {pathname === `/perfil/${userId}` ? (
             <IconButton aria-label="Ícone">
-              <Link href="/perfil">
+              <Link href={`/perfil/${userId}`}>
                 <Image src="/Perfil-on.svg" width={30} height={30} alt="Feed" />
               </Link>
             </IconButton>
           ) : (
             <IconButton aria-label="Ícone">
-              <Link href="/perfil">
+              <Link href={`/perfil/${userId}`}>
                 <Image
                   src="/Perfil-off.svg"
                   width={25}

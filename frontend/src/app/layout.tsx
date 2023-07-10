@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <MueContainer>{children}</MueContainer>
+          <MueContainer>{children}</MueContainer>
       </body>
     </html>
   );

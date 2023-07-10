@@ -1,32 +1,29 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
+  Headers,
   HttpException,
   HttpStatus,
-  Post,
-  Headers,
-  Get,
   Param,
-  Req,
-  Res,
-  Delete,
+  Post,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
+  ApiHeader,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
-  ApiHeader,
-  ApiBearerAuth,
-  ApiParam,
 } from '@nestjs/swagger';
+import { Post as IPost } from '@prisma/client';
 import { CreatePostResponse } from 'src/schemas/CreatePostResponse';
+import { ListPostResponse } from 'src/schemas/ListPostResponse';
+import { CacheService } from 'src/services/cache.service';
 import { JWTService } from 'src/services/jwt.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { CreatePostDto } from 'src/validators/Post.dtos';
-import { Post as IPost } from '@prisma/client';
-import { ListPostResponse } from 'src/schemas/ListPostResponse';
-import { Response, Request } from 'express';
-import { CacheService } from 'src/services/cache.service';
 
 type IJWT = {
   data: string;

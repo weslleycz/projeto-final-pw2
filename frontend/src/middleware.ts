@@ -20,12 +20,6 @@ export async function middleware(req: NextRequest, res: NextApiResponse) {
         } else {
           return NextResponse.next();
         }
-    case "/perfil":
-        if (!!token?.value) {
-          return NextResponse.next();
-        } else {
-          return NextResponse.rewrite(new URL("/", req.url));
-        }
     case "/feed":
       if (!!token?.value) {
         return NextResponse.next();

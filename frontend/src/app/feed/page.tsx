@@ -72,7 +72,7 @@ const Feed = () => {
                 return (
                   <Post
                     user={post.User}
-                    userIdPerfil={userData.id}
+                    userIdPerfil={userData?.id}
                     refetch={refetch}
                     key={post.id}
                     {...post}

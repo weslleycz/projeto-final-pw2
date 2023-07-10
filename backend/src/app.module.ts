@@ -11,6 +11,7 @@ import { GridFsService } from './services/gridfs.service';
 import { PostController } from './controllers/post/post.controller';
 import { StreamController } from './controllers/stream/stream.controller';
 import { CacheService } from './services/cache.service';
+import { CommentController } from './controllers/comment/comment.controller';
 
 @Module({
   imports: [],
@@ -20,6 +21,7 @@ import { CacheService } from './services/cache.service';
     FilesController,
     PostController,
     StreamController,
+    CommentController,
   ],
   providers: [
     AppService,

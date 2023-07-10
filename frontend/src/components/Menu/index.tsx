@@ -3,12 +3,13 @@ import { AvatarHeader } from "../AvatarHeader";
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { deleteCookie } from "cookies-next";
+import { deleteCookie, getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export const Menu = () => {
   const pathname = usePathname();
+  const userId = getCookie("id");
 
   const router = useRouter();
 
@@ -51,7 +52,7 @@ export const Menu = () => {
                 </button>
               </Link>
             )}
-            {pathname === "/perfil" ? (
+            {pathname === `/perfil/${userId}` ? (
               <button className={styles["btn-on"]}>
                 <span className={styles.line}></span>
                 <Box className={styles["btn-text"]}>
@@ -65,7 +66,7 @@ export const Menu = () => {
                 </Box>
               </button>
             ) : (
-              <Link href="/perfil">
+              <Link href={`/perfil/${userId}`}>
                 <button className={styles["btn-off"]}>
                   <span></span>
                   <Box className={styles["btn-text"]}>

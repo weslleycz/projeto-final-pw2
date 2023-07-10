@@ -37,6 +37,7 @@ export const Post = ({
   user,
 }: IPost) => {
   const token = getCookie("token");
+  const idUser = getCookie("id");
   const { data, isLoading } = useQuery("getUser", async () => {
     try {
       const user = await api.get(`/user/pubic/${userId}`);

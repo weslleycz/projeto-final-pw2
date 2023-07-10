@@ -26,9 +26,16 @@ import { JWTService } from 'src/services/jwt.service';
 import { CreateUserResponse } from '../../schemas/CreateUserResponse';
 import { BcryptService } from 'src/services/bcrypt.service';
 import { LoginUserResponse } from 'src/schemas/LoginUserResponse';
+import { CacheService } from 'src/services/cache.service';
 
 type IJWT = {
   data: string;
+};
+
+type IUserUpdate = {
+  name: string;
+  bio: string;
+  avatar: string;
 };
 
 @Controller('user')
@@ -38,6 +45,7 @@ export class UserController extends BaseController {
     private prismaService: PrismaService,
     private jWTService: JWTService,
     private bcryptService: BcryptService,
+    private cacheService: CacheService,
   ) {
     super();
   }
@@ -106,21 +114,19 @@ export class UserController extends BaseController {
 
   @Patch('/:id')
   @ApiBearerAuth()
-  async update(@Param('id') id: string): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
-  @Get('/pubic/:id')
-  @ApiOperation({ summary: 'Buscar usuário por ID' })
-  @ApiParam({ name: 'id', description: 'ID do usuário' })
-  @ApiResponse({ status: 200, description: 'Usuário encontrado', type: User })
-  @ApiResponse({ status: 400, description: 'Usuário não encontrado' })
-  async getById(@Param('id') id: string): Promise<any> {
-    console.log(id);
+  async update(
+    @Param('id') id: string,
+    @Body() { bio, name, avatar }: IUserUpdate,
+  ): Promise<any> {
     try {
-      const user = await this.prismaService.user.findFirst({
+      const user = await this.prismaService.user.update({
+        data: {
+          bio,
+          name,
+          avatar: avatar,
+        },
         where: {
-          id,
+          id: id,
         },
         select: {
           avatar: true,
@@ -132,7 +138,44 @@ export class UserController extends BaseController {
           name: true,
         },
       });
-      return user;
+      this.cacheService.set(id, user);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Não foi possivel editar o usuário',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Get('/pubic/:id')
+  @ApiOperation({ summary: 'Buscar usuário por ID' })
+  @ApiParam({ name: 'id', description: 'ID do usuário' })
+  @ApiResponse({ status: 200, description: 'Usuário encontrado', type: User })
+  @ApiResponse({ status: 400, description: 'Usuário não encontrado' })
+  async getById(@Param('id') id: string): Promise<any> {
+    try {
+      const userCache = await this.cacheService.get(id);
+      if (userCache === undefined) {
+        const user = await this.prismaService.user.findFirst({
+          where: {
+            id,
+          },
+          select: {
+            avatar: true,
+            bio: true,
+            cover: true,
+            posts: true,
+            email: true,
+            id: true,
+            name: true,
+          },
+        });
+        this.cacheService.set(id, user);
+        return user;
+      } else {
+        return userCache;
+      }
     } catch (error) {
       throw new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST);
     }

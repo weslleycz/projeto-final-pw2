@@ -94,7 +94,6 @@ export const PostCreator = ({refetch}:Props) => {
           refetch()
           setText("");
           setSelectedFile(null);
-          console.log(12345);
         } catch (error) {
           console.log(error);
         }

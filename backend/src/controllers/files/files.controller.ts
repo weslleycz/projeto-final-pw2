@@ -85,7 +85,6 @@ export class FilesController {
         },
       });
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         'Não é possível fazer upload desse arquivo',
         HttpStatus.BAD_REQUEST,
@@ -124,14 +123,21 @@ export class FilesController {
   })
   @Get('download/:id')
   async getFile(@Param('id') id: string, @Res() res: Response) {
-    const fileStream = this.gridFsService.getFileStream(
-      ObjectId.createFromHexString(id),
-    );
-    res.set({
-      'Content-Type': 'application/octet-stream',
-      'Content-Disposition': `attachment; filename=${id}`,
-    });
-    (await fileStream).pipe(res);
+    try {
+      const fileStream = this.gridFsService.getFileStream(
+        ObjectId.createFromHexString(id),
+      );
+      res.set({
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename=${id}`,
+      });
+      (await fileStream).pipe(res);
+    } catch (error) {
+      throw new HttpException(
+        'Não é possível fazer download desse arquivo',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @Put('upload')
@@ -168,7 +174,6 @@ export class FilesController {
       );
       return fileId;
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         'Não é possível fazer upload desse arquivo',
         HttpStatus.BAD_REQUEST,

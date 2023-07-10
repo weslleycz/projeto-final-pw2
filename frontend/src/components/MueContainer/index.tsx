@@ -13,7 +13,7 @@ type Props = {
 export const MueContainer = ({ children }: Props) => {
   return (
     <>
-     <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
      <ThemeProvider theme={theme}>{children}</ThemeProvider>
      </QueryClientProvider>
     </>
