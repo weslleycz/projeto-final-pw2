@@ -13,6 +13,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { JWTService } from 'src/services/jwt.service';
 import { PrismaService } from 'src/services/prisma.service';
@@ -23,6 +24,7 @@ type IJWT = {
 };
 
 @Controller('comment')
+@ApiTags('Comment')
 export class CommentController {
   constructor(
     private prismaService: PrismaService,
@@ -71,9 +73,13 @@ export class CommentController {
   }
 
   @Get('/:id')
+  @ApiOperation({
+    summary: 'Lista de comentarios',
+    description: 'Lista de comentarios por postagem',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Lista de comentarios por postagem',
+    description: 'Retorna uma lista de comentários',
   })
   @ApiParam({ name: 'id', description: 'ID da postagem' })
   async getComment(@Param('id') postId: string) {

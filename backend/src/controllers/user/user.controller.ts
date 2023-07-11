@@ -1,32 +1,33 @@
 import {
-  Controller,
-  Post,
-  Get,
-  Delete,
   Body,
+  Controller,
+  Delete,
+  Get,
+  Headers,
   HttpException,
   HttpStatus,
   Param,
   Patch,
-  Headers,
+  Post,
 } from '@nestjs/common';
 import {
-  ApiTags,
   ApiBearerAuth,
   ApiHeader,
-  ApiParam,
+  ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiResponse,
+  ApiTags,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
-import { PrismaService } from '../../services/prisma.service';
 import { BaseController } from 'src/common/BaseController.common';
-import { IUser, User } from '../../types/IUser';
-import { CreateUserDto, LoginUserDto } from 'src/validators/User.dtos';
-import { JWTService } from 'src/services/jwt.service';
-import { CreateUserResponse } from '../../schemas/CreateUserResponse';
 import { BcryptService } from 'src/services/bcrypt.service';
-import { LoginUserResponse } from 'src/schemas/LoginUserResponse';
 import { CacheService } from 'src/services/cache.service';
+import { JWTService } from 'src/services/jwt.service';
+import { CreateUserDto, LoginUserDto } from 'src/validators/User.dtos';
+import { CreateUserResponse } from '../../schemas/CreateUserResponse';
+import { PrismaService } from '../../services/prisma.service';
+import { User } from '../../types/IUser';
 
 type IJWT = {
   data: string;
@@ -36,6 +37,7 @@ type IUserUpdate = {
   name: string;
   bio: string;
   avatar: string;
+  cover: string;
 };
 
 @Controller('user')
@@ -114,9 +116,14 @@ export class UserController extends BaseController {
 
   @Patch('/:id')
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Atualiza um usuário por ID' })
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', description: 'ID do usuário' })
+  @ApiOkResponse({ description: 'Usuário atualizado com sucesso' })
+  @ApiBadRequestResponse({ description: 'Não foi possível editar o usuário' })
   async update(
     @Param('id') id: string,
-    @Body() { bio, name, avatar }: IUserUpdate,
+    @Body() { bio, name, avatar, cover }: IUserUpdate,
   ): Promise<any> {
     try {
       const user = await this.prismaService.user.update({
@@ -124,6 +131,7 @@ export class UserController extends BaseController {
           bio,
           name,
           avatar: avatar,
+          cover,
         },
         where: {
           id: id,
@@ -138,7 +146,20 @@ export class UserController extends BaseController {
           name: true,
         },
       });
-      this.cacheService.set(id, user);
+      const posts = await this.prismaService.post.findMany({
+        include: {
+          comments: true,
+          User: {
+            select: {
+              avatar: true,
+              name: true,
+              id: true,
+              email: true,
+            },
+          },
+        },
+      });
+      await this.cacheService.set('posts', posts);
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -155,27 +176,21 @@ export class UserController extends BaseController {
   @ApiResponse({ status: 400, description: 'Usuário não encontrado' })
   async getById(@Param('id') id: string): Promise<any> {
     try {
-      const userCache = await this.cacheService.get(id);
-      if (userCache === undefined) {
-        const user = await this.prismaService.user.findFirst({
-          where: {
-            id,
-          },
-          select: {
-            avatar: true,
-            bio: true,
-            cover: true,
-            posts: true,
-            email: true,
-            id: true,
-            name: true,
-          },
-        });
-        this.cacheService.set(id, user);
-        return user;
-      } else {
-        return userCache;
-      }
+      const user = await this.prismaService.user.findFirst({
+        where: {
+          id,
+        },
+        select: {
+          avatar: true,
+          bio: true,
+          cover: true,
+          posts: true,
+          email: true,
+          id: true,
+          name: true,
+        },
+      });
+      return user;
     } catch (error) {
       throw new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST);
     }

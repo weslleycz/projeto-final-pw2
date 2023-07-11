@@ -104,14 +104,18 @@ export class FilesController {
       },
     });
     if (user.avatar != null) {
-      const fileStream = this.gridFsService.getFileStream(
-        ObjectId.createFromHexString(user.avatar),
-      );
-      res.set({
-        'Content-Type': 'application/octet-stream',
-        'Content-Disposition': `attachment; filename=${user.avatar}`,
-      });
-      (await fileStream).pipe(res);
+      try {
+        const fileStream = this.gridFsService.getFileStream(
+          ObjectId.createFromHexString(user.avatar),
+        );
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${user.avatar}`,
+        });
+        (await fileStream).pipe(res);
+      } catch (error) {
+        throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND);
+      }
     } else {
       throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND);
     }

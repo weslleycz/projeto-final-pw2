@@ -18,7 +18,6 @@ $mediumScreen: 700px;
 }
 
 .cover {
-  background-color: #b7f3b7;
   @media screen and (min-width: $mediumScreen + 1) {
     padding: 10%;
   }
@@ -28,8 +27,16 @@ $mediumScreen: 700px;
   }
 }
 
+.cover-container{
+  background-color: #b7f3b7;
+}
+
 .cont {
   padding-left: 2%;
+}
+
+.cover-icon{
+  text-align: right;
 }
 
 .avatar {

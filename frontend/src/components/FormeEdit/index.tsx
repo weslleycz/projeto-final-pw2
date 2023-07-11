@@ -95,6 +95,7 @@ export const FormeEdit = ({ id, name, cover, bio, avatar, refetch }: Props) => {
         name: nameUser,
         bio: bioUser,
         avatar: idAvatar,
+        cover
       })
       .then(() => {
         handleClose();
