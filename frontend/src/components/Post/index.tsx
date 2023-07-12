@@ -178,7 +178,7 @@ export const Post = ({
                   height={12}
                   alt="comment"
                 />
-                <p>{`${comments?.length} Comerciários`}</p>
+                <p>{`${comments?.length} Comentários`}</p>
               </Stack>
             </Box>
           </Stack>
