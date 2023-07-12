@@ -159,7 +159,6 @@ export class UserController extends BaseController {
           },
         },
       });
-      await this.cacheService.set('posts', posts);
     } catch (error) {
       console.log(error);
       throw new HttpException(

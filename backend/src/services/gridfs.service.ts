@@ -1,36 +1,57 @@
 import { Injectable } from '@nestjs/common';
-import { GridFSBucket, MongoClient, ObjectId } from 'mongodb';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class GridFsService {
-  private bucket: GridFSBucket;
-
-  constructor() {
-    this.connectToMongo();
-  }
-  private async connectToMongo() {
-    const client = await MongoClient.connect(
-      `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@localhost:27017/imagens?authSource=admin&retryWrites=true&w=majority`,
-    );
-
-    const db = client.db('imagens');
-    this.bucket = new GridFSBucket(db);
-  }
-
+  constructor(private prisma: PrismaService) {}
   async uploadFile(
     fileStream: NodeJS.ReadableStream,
     filename: string,
-  ): Promise<ObjectId> {
-    const uploadStream = this.bucket.openUploadStream(filename);
-    return new Promise((resolve, reject) => {
-      fileStream
-        .pipe(uploadStream)
-        .on('error', reject)
-        .on('finish', () => resolve(uploadStream.id));
+  ): Promise<string> {
+    const buffer = await streamToBuffer(fileStream);
+
+    // Salve o buffer no banco de dados usando o Prisma
+    const arquivo = await this.prisma.img.create({
+      data: {
+        filename: filename,
+        buffer: buffer,
+      },
     });
+
+    return arquivo.id;
   }
 
-  async getFileStream(fileId: ObjectId): Promise<NodeJS.ReadableStream> {
-    return this.bucket.openDownloadStream(fileId);
+  async getFileStream(fileId: string): Promise<NodeJS.ReadableStream> {
+    // Recupere o arquivo do banco de dados usando o Prisma
+    const arquivo = await this.prisma.img.findUnique({
+      where: {
+        id: fileId,
+      },
+    });
+
+    // Crie um ReadableStream a partir do conteúdo do arquivo
+    const stream = bufferToStream(arquivo.buffer);
+
+    return stream;
   }
+}
+
+// Função utilitária para converter um ReadableStream em um Buffer
+function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    stream.on('data', (chunk: Buffer) => chunks.push(chunk));
+    stream.on('end', () => resolve(Buffer.concat(chunks)));
+    stream.on('error', (error: Error) => reject(error));
+  });
+}
+
+function bufferToStream(buffer: Buffer): NodeJS.ReadableStream {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const stream = new (require('stream').Readable)();
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  stream._read = () => {}; // eslint-disable-line no-underscore-dangle
+  stream.push(buffer);
+  stream.push(null);
+  return stream;
 }

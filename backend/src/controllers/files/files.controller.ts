@@ -23,7 +23,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Readable } from 'node:stream';
 import { JWTService } from 'src/services/jwt.service';
 import { PrismaService } from 'src/services/prisma.service';
-import { ObjectId } from 'mongodb';
 import { Response } from 'express';
 
 type IJWT = {
@@ -105,9 +104,7 @@ export class FilesController {
     });
     if (user.avatar != null) {
       try {
-        const fileStream = this.gridFsService.getFileStream(
-          ObjectId.createFromHexString(user.avatar),
-        );
+        const fileStream = this.gridFsService.getFileStream(user.avatar);
         res.set({
           'Content-Type': 'application/octet-stream',
           'Content-Disposition': `attachment; filename=${user.avatar}`,
@@ -128,9 +125,7 @@ export class FilesController {
   @Get('download/:id')
   async getFile(@Param('id') id: string, @Res() res: Response) {
     try {
-      const fileStream = this.gridFsService.getFileStream(
-        ObjectId.createFromHexString(id),
-      );
+      const fileStream = this.gridFsService.getFileStream(id);
       res.set({
         'Content-Type': 'application/octet-stream',
         'Content-Disposition': `attachment; filename=${id}`,

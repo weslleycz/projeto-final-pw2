@@ -19,22 +19,6 @@ const Feed = () => {
     return posts?.data.reverse();
   });
 
-  useEffect(() => {
-    const eventSource = new EventSource(process.env.API_Url + "/stream");
-    console.clear();
-    eventSource.addEventListener("message", (event) => {
-      if (!isLoading) {
-        if (data.length != event.data) {
-          refetch();
-        }
-      }
-    });
-
-    return () => {
-      eventSource.close();
-    };
-  }, [data, isLoading, refetch]);
-
   const router = useRouter();
 
   const token = getCookie("token");

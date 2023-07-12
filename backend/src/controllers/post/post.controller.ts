@@ -49,26 +49,20 @@ export class PostController {
     isArray: true,
   })
   async getAll(): Promise<IPost[]> {
-    const postCache = <IPost[]>await this.cacheService.get('posts');
-    if (postCache === undefined) {
-      const posts = await this.prismaService.post.findMany({
-        include: {
-          comments: true,
-          User: {
-            select: {
-              avatar: true,
-              name: true,
-              id: true,
-              email: true,
-            },
+    const posts = await this.prismaService.post.findMany({
+      include: {
+        comments: true,
+        User: {
+          select: {
+            avatar: true,
+            name: true,
+            id: true,
+            email: true,
           },
         },
-      });
-      await this.cacheService.set('posts', posts);
-      return posts;
-    } else {
-      return postCache;
-    }
+      },
+    });
+    return posts;
   }
 
   @Get('/:id')
@@ -139,25 +133,11 @@ export class PostController {
         await this.prismaService.post.create({
           data: {
             date: new Date().toString(),
-            likes: [],
+            likes: JSON.stringify([]),
             text,
             userId: id.data,
           },
         });
-        const posts = await this.prismaService.post.findMany({
-          include: {
-            comments: true,
-            User: {
-              select: {
-                avatar: true,
-                name: true,
-                id: true,
-                email: true,
-              },
-            },
-          },
-        });
-        await this.cacheService.set('posts', posts);
         return { message: 'postagem criada com sucesso' };
       } catch (error) {
         throw new HttpException(
@@ -171,26 +151,12 @@ export class PostController {
         await this.prismaService.post.create({
           data: {
             date: new Date().toString(),
-            likes: [],
+            likes: JSON.stringify([]),
             text,
             userId: id.data,
             image: image,
           },
         });
-        const posts = await this.prismaService.post.findMany({
-          include: {
-            comments: true,
-            User: {
-              select: {
-                avatar: true,
-                name: true,
-                id: true,
-                email: true,
-              },
-            },
-          },
-        });
-        await this.cacheService.set('posts', posts);
         return { message: 'postagem criada com sucesso' };
       } catch (error) {
         throw new HttpException(
@@ -233,60 +199,31 @@ export class PostController {
           id,
         },
       });
-      const likes = Object.values(post.likes);
+
+      const likes = post.likes ? JSON.parse(post.likes) : [];
       const index = likes.indexOf(token.data);
-      if (likes.includes(token.data)) {
+
+      if (index !== -1) {
         likes.splice(index, 1);
-        await this.prismaService.post.update({
-          where: {
-            id,
-          },
-          data: {
-            likes,
-          },
-        });
-        const posts = await this.prismaService.post.findMany({
-          include: {
-            comments: true,
-            User: {
-              select: {
-                avatar: true,
-                name: true,
-                id: true,
-                email: true,
-              },
-            },
-          },
-        });
-        await this.cacheService.set('posts', posts);
       } else {
         likes.push(token.data);
-        await this.prismaService.post.update({
-          where: {
-            id,
-          },
-          data: {
-            likes,
-          },
-        });
-        const posts = await this.prismaService.post.findMany({
-          include: {
-            comments: true,
-            User: {
-              select: {
-                avatar: true,
-                name: true,
-                id: true,
-                email: true,
-              },
-            },
-          },
-        });
-        await this.cacheService.set('posts', posts);
       }
+
+      await this.prismaService.post.update({
+        where: {
+          id,
+        },
+        data: {
+          likes: JSON.stringify(likes),
+        },
+      });
+
       return { message: 'like dado com sucesso' };
     } catch (error) {
-      throw new HttpException('Não é possível da like', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Não é possível dar like',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }

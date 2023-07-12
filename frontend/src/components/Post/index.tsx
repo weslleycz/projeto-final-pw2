@@ -55,13 +55,17 @@ export const Post = ({
   };
 
   const likesPost = async (refetch: () => void) => {
-    await api.get(`/post/like/${id}`, {
-      headers: {
-        token,
-      },
-    });
-    refetch();
-    handlePlay();
+    try {
+      await api.get(`/post/like/${id}`, {
+        headers: {
+          token,
+        },
+      });
+      refetch();
+      handlePlay();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -158,7 +162,7 @@ export const Post = ({
                   height={12}
                   alt="Likes"
                 />
-                <p>{`${likes.length} Likes`}</p>
+                <p>{`${JSON.parse(likes as unknown as string)?.length} Likes`}</p>
               </Stack>
             </Box>
             <Box>
